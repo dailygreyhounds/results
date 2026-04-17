@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)file:///C:/Users/aiden/Downloads/daily_dashboard.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Greyhound Intelligence — 2026-04-17</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./Greyhound Intelligence — 2026-04-15_files/css2" rel="stylesheet">
+<style>
+/* ── Reset & tokens ─────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg0:#0a0c0f;
+  --bg1:#0f1117;
+  --bg2:#14171f;
+  --bg3:#1c2030;
+  --bg4:#242840;
+  --border:#232640;
+  --border2:#2e3358;
+  --gold:#f0b429;
+  --gold2:#ffd166;
+  --green:#3dd68c;
+  --red:#f87171;
+  --blue:#60a5fa;
+  --purple:#a78bfa;
+  --amber:#fb923c;
+  --teal:#2dd4bf;
+  --txt:#e2e8f4;
+  --txt2:#8892b0;
+  --txt3:#4a5278;
+  --font-display:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:6px;
+  --radius-lg:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg0);color:var(--txt);font-family:var(--font-body);font-size:14px;
+     line-height:1.6;min-height:100vh}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+.topbar{
+  background:var(--bg1);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:56px;position:sticky;top:0;z-index:100;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{font-size:20px}
+.brand-name{font-family:var(--font-display);font-weight:700;font-size:17px;
+             color:var(--gold);letter-spacing:.5px}
+.brand-date{font-size:11px;color:var(--txt3);font-family:var(--font-mono);margin-top:1px}
+.nav{display:flex;gap:2px}
+.nav-btn{
+  background:none;border:none;color:var(--txt2);font-family:var(--font-body);
+  font-size:13px;padding:6px 14px;border-radius:var(--radius);cursor:pointer;
+  transition:all .15s;white-space:nowrap;font-weight:400;
+}
+.nav-btn:hover{color:var(--txt);background:var(--bg3)}
+.nav-btn.active{color:var(--gold);background:var(--bg3);font-weight:500}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.page{display:none;padding:28px;max-width:1200px;margin:0 auto;animation:fadein .2s}
+.page.show{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── Section headers ─────────────────────────────────────────────────── */
+.section-title{
+  font-family:var(--font-display);font-weight:700;font-size:22px;
+  color:var(--txt);margin-bottom:4px;letter-spacing:-.3px;
+}
+.section-sub{font-size:13px;color:var(--txt2);margin-bottom:24px}
+
+/* ── Cards ───────────────────────────────────────────────────────────── */
+.card-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:14px 18px;min-width:110px;flex:1;
+}
+.stat-card .lbl{font-size:10px;color:var(--txt3);text-transform:uppercase;
+                 letter-spacing:.8px;font-weight:500}
+.stat-card .val{font-family:var(--font-mono);font-size:22px;font-weight:500;
+                margin-top:4px;color:var(--txt)}
+.stat-card.gold .val{color:var(--gold)}
+.stat-card.green .val{color:var(--green)}
+.stat-card.red .val{color:var(--red)}
+.stat-card.blue .val{color:var(--blue)}
+
+/* ── Month bar cards ─────────────────────────────────────────────────── */
+.month-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.month-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 14px;min-width:88px;flex:1;cursor:pointer;transition:all .15s;
+}
+.month-card:hover{border-color:var(--border2);background:var(--bg3)}
+.month-card.pos{border-color:rgba(61,214,140,.3)}
+.month-card.pos .mval{color:var(--green)}
+.month-card.neg{border-color:rgba(248,113,113,.3)}
+.month-card.neg .mval{color:var(--red)}
+.month-card .mlbl{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px}
+.month-card .mval{font-family:var(--font-mono);font-size:16px;font-weight:500;
+                   margin-top:3px;color:var(--txt)}
+
+/* ── Filters bar ─────────────────────────────────────────────────────── */
+.filters{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:12px 16px;margin-bottom:20px;
+}
+.filters label{font-size:11px;color:var(--txt3);font-weight:500;text-transform:uppercase;
+                letter-spacing:.6px}
+.filters select,.filters input{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);
+  color:var(--txt);padding:6px 10px;font-size:12px;outline:none;font-family:var(--font-body);
+  transition:border .15s;
+}
+.filters select:focus,.filters input:focus{border-color:var(--gold)}
+.filter-count{font-size:11px;color:var(--txt3);font-family:var(--font-mono);margin-left:auto}
+
+/* ── Table ───────────────────────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead th{
+  background:var(--bg2);color:var(--txt3);font-size:10px;text-transform:uppercase;
+  letter-spacing:.8px;font-weight:500;padding:10px 14px;text-align:left;
+  cursor:pointer;white-space:nowrap;user-select:none;transition:color .15s;
+  border-bottom:1px solid var(--border);
+}
+thead th:hover{color:var(--txt)}
+thead th.sort-asc::after{content:" ↑";color:var(--gold)}
+thead th.sort-desc::after{content:" ↓";color:var(--gold)}
+tbody td{
+  padding:9px 14px;border-bottom:1px solid var(--border);
+  vertical-align:middle;font-size:13px;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover td{background:var(--bg2)}
+.td-num{font-family:var(--font-mono);font-size:12px}
+.td-muted{color:var(--txt2);font-size:12px}
+.no-rows{text-align:center;padding:48px;color:var(--txt3);font-size:13px}
+
+/* ── Tags ────────────────────────────────────────────────────────────── */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;
+  white-space:nowrap;letter-spacing:.3px;
+}
+.tag-s9    {background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
+.tag-m2r   {background:rgba(96,165,250,.15); color:#60a5fa;border:1px solid rgba(96,165,250,.3)}
+.tag-m1    {background:rgba(61,214,140,.15); color:#3dd68c;border:1px solid rgba(61,214,140,.3)}
+.tag-m1m2r {background:rgba(251,191,36,.15); color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+.tag-s10   {background:rgba(251,146,60,.15); color:#fb923c;border:1px solid rgba(251,146,60,.3)}
+.tag-low   {background:rgba(239,68,68,.12);  color:#f87171;border:1px solid rgba(239,68,68,.25)}
+.tag-gold  {background:rgba(240,180,41,.15); color:#f0b429;border:1px solid rgba(240,180,41,.3)}
+.tag-promo {background:rgba(45,212,191,.15); color:#2dd4bf;border:1px solid rgba(45,212,191,.3)}
+
+/* ── Colour helpers ──────────────────────────────────────────────────── */
+.pos{color:var(--green)} .neg{color:var(--red)} .neutral{color:var(--txt2)}
+.win-txt{color:var(--green);font-weight:600}
+.plc-txt{color:var(--blue);font-weight:600}
+.los-txt{color:var(--red)}
+
+/* ── Selection card ──────────────────────────────────────────────────── */
+.sel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;
+          margin-bottom:28px}
+.sel-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px 18px;transition:border-color .15s;
+}
+.sel-card:hover{border-color:var(--border2)}
+.sel-card.golden-card{border-color:rgba(240,180,41,.35);background:rgba(240,180,41,.04)}
+.sel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.sel-name{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--txt)}
+.sel-odds{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--gold)}
+.sel-meta{font-size:12px;color:var(--txt2);margin-bottom:8px}
+.sel-stake{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--bg3);border-radius:var(--radius);padding:8px 12px;
+  font-size:12px;margin-top:10px;
+}
+.sel-stake .stake-lbl{color:var(--txt3)}
+.sel-stake .stake-val{font-family:var(--font-mono);color:var(--green);font-weight:500}
+
+/* ── Model row (performance page) ────────────────────────────────────── */
+.model-rows{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.model-row{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px 20px;display:grid;align-items:center;
+  grid-template-columns:180px 90px 90px 90px 100px 1fr;gap:12px;
+}
+.model-row:hover{border-color:var(--border2)}
+.model-name-cell{display:flex;align-items:center;gap:10px}
+.model-emoji{font-size:18px}
+.model-label{font-family:var(--font-display);font-weight:600;font-size:14px}
+.model-sub{font-size:11px;color:var(--txt3);margin-top:1px;font-family:var(--font-mono)}
+.model-stat{text-align:center}
+.model-stat .ms-val{font-family:var(--font-mono);font-size:15px;font-weight:500}
+.model-stat .ms-lbl{font-size:10px;color:var(--txt3);text-transform:uppercase;
+                     letter-spacing:.6px;margin-top:1px}
+.roi-bar-wrap{display:flex;align-items:center;gap:8px}
+.roi-bar{height:5px;background:var(--bg3);border-radius:3px;flex:1;overflow:hidden}
+.roi-fill{height:100%;border-radius:3px;background:var(--green);transition:width .6s ease}
+.roi-fill.neg{background:var(--red)}
+
+/* ── Track table ─────────────────────────────────────────────────────── */
+.track-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:10px;margin-bottom:28px;
+}
+.track-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:12px 14px;transition:border-color .15s;
+}
+.track-card:hover{border-color:var(--border2)}
+.track-name{font-weight:500;font-size:13px;margin-bottom:6px}
+.track-stats{display:flex;justify-content:space-between;font-size:11px;color:var(--txt2);
+              font-family:var(--font-mono)}
+.track-bar{height:3px;background:var(--bg3);border-radius:2px;margin-top:8px;overflow:hidden}
+.track-fill{height:100%;border-radius:2px}
+
+/* ── Glossary ────────────────────────────────────────────────────────── */
+.glossary-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:14px;
+}
+.gloss-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px 18px;
+}
+.gloss-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.gloss-emoji{font-size:20px}
+.gloss-name{font-family:var(--font-display);font-weight:600;font-size:15px}
+.gloss-criteria{
+  font-family:var(--font-mono);font-size:11px;color:var(--gold);
+  background:var(--bg3);padding:6px 10px;border-radius:var(--radius);
+  margin-bottom:8px;
+}
+.gloss-desc{font-size:12px;color:var(--txt2);line-height:1.6}
+.gloss-stats{
+  display:flex;gap:12px;margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);font-size:11px;font-family:var(--font-mono);
+}
+.gloss-stat .gsl{color:var(--txt3)}
+.gloss-stat .gsv{color:var(--txt);font-weight:500;margin-top:1px}
+
+/* ── Divider ─────────────────────────────────────────────────────────── */
+.divider{height:1px;background:var(--border);margin:28px 0}
+.section-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:.9px;font-weight:600;
+  color:var(--txt3);margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:"";flex:1;height:1px;background:var(--border)}
+
+/* ── Pos breakdown bar ───────────────────────────────────────────────── */
+.pos-breakdown{display:flex;gap:10px;flex-wrap:wrap}
+.pos-block{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;flex:1;min-width:200px;
+}
+.pos-block-title{font-size:11px;color:var(--txt3);text-transform:uppercase;
+                  letter-spacing:.7px;margin-bottom:10px;font-weight:500}
+.pos-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.pos-lbl{font-size:11px;color:var(--txt2);width:32px;font-family:var(--font-mono)}
+.pos-bar-wrap{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.pos-bar-fill{height:100%;border-radius:3px;background:var(--gold);opacity:.85}
+.pos-pct{font-size:11px;color:var(--txt2);font-family:var(--font-mono);width:36px;text-align:right}
+.pos-n{font-size:11px;color:var(--txt3);font-family:var(--font-mono);width:24px;text-align:right}
+
+/* ── Footer ──────────────────────────────────────────────────────────── */
+footer{
+  text-align:center;padding:32px;font-size:11px;color:var(--txt3);
+  border-top:1px solid var(--border);margin-top:40px;font-family:var(--font-mono);
+}
+/* ── Results sub-tabs ──────────────────────────────────────────────── */
+.sub-tabs{display:flex;gap:4px;margin:18px 0 14px;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);padding-bottom:0}
+.sub-tab-btn{
+  background:none;border:none;color:var(--txt2);font-family:var(--font-body);
+  font-size:12px;padding:8px 14px;border-radius:0;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;
+  font-weight:400;margin-bottom:-1px;
+}
+.sub-tab-btn:hover{color:var(--txt)}
+.sub-tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:500}
+.sub-pane{display:none;animation:fadein .2s}
+.sub-pane.show{display:block}
+.sub-desc{font-size:12px;color:var(--txt2);margin-bottom:14px;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-icon">🏆</span>
+    <div>
+      <div class="brand-name">Greyhound Intelligence</div>
+      <div class="brand-date">Updated 2026-04-17</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="nav(&#39;today&#39;,this)">Today</button>
+    <button class="nav-btn" onclick="nav(&#39;results&#39;,this)">Results</button>
+    <button class="nav-btn" onclick="nav(&#39;performance&#39;,this)">Models</button>
+    <button class="nav-btn" onclick="nav(&#39;tracks&#39;,this)">Tracks</button>
+    <button class="nav-btn" onclick="nav(&#39;glossary&#39;,this)">Guide</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: TODAY
+════════════════════════════════════════════════════════ -->
+<div id="page-today" class="page show">
+  <div class="section-title">Today's Selections</div>
+  <div class="section-sub" id="today-sub">6 total selections · Bankroll $10,000</div>
+
+  <div id="today-stats" class="card-row"><div class="stat-card gold">
+    <div class="lbl">Golden Selections</div><div class="val">2</div></div><div class="stat-card green">
+    <div class="lbl">Total to Stake</div><div class="val">$3,000</div></div><div class="stat-card ">
+    <div class="lbl">Bankroll</div><div class="val">$10,000</div></div><div class="stat-card ">
+    <div class="lbl">Other Selections</div><div class="val">3</div></div></div>
+
+  <div id="selections-container"><div class="section-label">⭐ Golden Rule — 2 selections</div><div class="sel-grid"><div class="sel-card golden-card">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">White Hawke</div>
+            <div class="sel-meta">Angle Park · R1 · Box 1</div>
+            <div class="sel-meta">🕐 4:07pm · 0 missing data</div>
+          </div>
+          <div class="sel-odds">$1.55</div>
+        </div>
+        <span class="tag tag-m2r">🔬 M2r</span>
+        <div class="sel-stake">
+          <span class="stake-lbl">Stake $1,500 @ 1.55</span>
+          <span class="stake-val">→ $2,325</span>
+        </div>
+      </div><div class="sel-card golden-card">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Zipping Beluga</div>
+            <div class="sel-meta">Sandown Park · R5 · Box 4</div>
+            <div class="sel-meta">🕐 4:55pm · 1 missing data</div>
+          </div>
+          <div class="sel-odds">$1.80</div>
+        </div>
+        <span class="tag tag-s9">💫 S9</span>
+        <div class="sel-stake">
+          <span class="stake-lbl">Stake $1,500 @ 1.80</span>
+          <span class="stake-val">→ $2,700</span>
+        </div>
+      </div></div><div class="section-label">🌊 S10 — 3 selections</div><div class="sel-grid"><div class="sel-card ">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Fast Magic</div>
+            <div class="sel-meta">Angle Park · R3 · Box 2</div>
+            <div class="sel-meta">🕐 4:28pm · 0 missing data</div>
+          </div>
+          <div class="sel-odds">$6.50</div>
+        </div>
+        <span class="tag tag-m1">⚡ M1</span>
+        
+      </div><div class="sel-card ">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Lunar Express</div>
+            <div class="sel-meta">Bendigo · R3 · Box 7</div>
+            <div class="sel-meta">🕐 5:15pm · 1 missing data</div>
+          </div>
+          <div class="sel-odds">$2.40</div>
+        </div>
+        <span class="tag tag-s10">🌊 S10</span>
+        
+      </div><div class="sel-card ">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Rockstar Rebel</div>
+            <div class="sel-meta">Sandown Park · R8 · Box 3</div>
+            <div class="sel-meta">🕐 5:40pm · 0 missing data</div>
+          </div>
+          <div class="sel-odds">$5.20</div>
+        </div>
+        <span class="tag tag-m1">⚡ M1</span>
+        
+      </div></div><div class="section-label">⚠️ Low Data — 1 selection</div><div class="sel-grid"><div class="sel-card ">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Blue Denim</div>
+            <div class="sel-meta">Ballarat · R11 · Box 5</div>
+            <div class="sel-meta">🕐 7:22pm · 2 missing data</div>
+          </div>
+          <div class="sel-odds">$3.80</div>
+        </div>
+        <span class="tag tag-s10">🌊 S10</span>
+        
+      </div></div></div>
+
+  <div class="divider"></div>
+  <div class="section-label">Yesterday's Results</div>
+  <div id="yesterday-stats" class="card-row"><div class="stat-card ">
+    <div class="lbl">Bets</div><div class="val">4</div></div><div class="stat-card ">
+    <div class="lbl">Won</div><div class="val">2</div></div><div class="stat-card ">
+    <div class="lbl">Placed</div><div class="val">3</div></div><div class="stat-card green">
+    <div class="lbl">ROI</div><div class="val">+18.8%</div></div></div>
+  <div id="yesterday-dogs"><div class="sel-grid"><div class="sel-card">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Joker Bonus</div>
+            <div class="sel-meta">Grafton · RR8</div>
+          </div>
+          <div style="text-align:right">
+            <div class="win-txt" style="font-family:var(--font-mono);font-size:16px;font-weight:600">WIN</div>
+            <div style="font-size:11px;color:var(--txt3);font-family:var(--font-mono)">1st</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <span class="tag tag-s9">💫 S9</span>
+          <div style="font-family:var(--font-mono);font-size:13px">$2.00 → <span class="pos">+$1,500</span></div>
+        </div>
+      </div><div class="sel-card">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Nikita Bale</div>
+            <div class="sel-meta">Ballarat · RR13</div>
+          </div>
+          <div style="text-align:right">
+            <div class="los-txt" style="font-family:var(--font-mono);font-size:16px;font-weight:600">4th</div>
+            <div style="font-size:11px;color:var(--txt3);font-family:var(--font-mono)">4th</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <span class="tag tag-s10">🌊 S10</span>
+          <div style="font-family:var(--font-mono);font-size:13px">$4.80 → <span class="neg">-$1,500</span></div>
+        </div>
+      </div><div class="sel-card">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Ruby Show</div>
+            <div class="sel-meta">Ballarat · RR14</div>
+          </div>
+          <div style="text-align:right">
+            <div class="plc-txt" style="font-family:var(--font-mono);font-size:16px;font-weight:600">PLACE</div>
+            <div style="font-size:11px;color:var(--txt3);font-family:var(--font-mono)">2nd</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <span class="tag tag-s10">🌊 S10</span>
+          <div style="font-family:var(--font-mono);font-size:13px">$4.00 → <span class="neg">-$1,500</span></div>
+        </div>
+      </div><div class="sel-card">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">Mr Yellowstone</div>
+            <div class="sel-meta">Murray Bridge · RR6</div>
+          </div>
+          <div style="text-align:right">
+            <div class="win-txt" style="font-family:var(--font-mono);font-size:16px;font-weight:600">WIN</div>
+            <div style="font-size:11px;color:var(--txt3);font-family:var(--font-mono)">1st</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <span class="tag tag-s10">🌊 S10</span>
+          <div style="font-family:var(--font-mono);font-size:13px">$2.50 → <span class="pos">+$2,250</span></div>
+        </div>
+      </div></div></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: RESULTS
+════════════════════════════════════════════════════════ -->
+<div id="page-results" class="page">
+  <div class="section-title">Results History</div>
+  <div class="section-sub">Every bet tracked since day one — filterable by model, month and outcome.</div>
+
+  <div id="results-stats" class="card-row"><div class="stat-card gold">
+    <div class="lbl">Win Rate</div><div class="val">77.8%</div></div><div class="stat-card green">
+    <div class="lbl">Wins</div><div class="val">28</div></div><div class="stat-card green">
+    <div class="lbl">Total P/L</div><div class="val">+$86.6k</div></div><div class="stat-card green">
+    <div class="lbl">ROI</div><div class="val">+160.4%</div></div><div class="stat-card ">
+    <div class="lbl">Place Rate</div><div class="val">86.1%</div></div><div class="stat-card ">
+    <div class="lbl">Bets</div><div class="val">36</div></div></div>
+
+  <div class="section-label">Monthly P/L <span id="month-badge" style="text-transform:none;letter-spacing:0;color:var(--txt2);font-size:11px;margin-left:6px"></span></div>
+  <div id="month-row" class="month-row"><div class="month-card pos" onclick="filterMonth(&#39;2025-12&#39;)">
+        <div class="mlbl">Dec '25</div>
+        <div class="mval">+$7.5k</div>
+      </div><div class="month-card pos" onclick="filterMonth(&#39;2026-01&#39;)">
+        <div class="mlbl">Jan '26</div>
+        <div class="mval">+$51.3k</div>
+      </div><div class="month-card pos" onclick="filterMonth(&#39;2026-02&#39;)">
+        <div class="mlbl">Feb '26</div>
+        <div class="mval">+$19.9k</div>
+      </div><div class="month-card pos" onclick="filterMonth(&#39;2026-03&#39;)">
+        <div class="mlbl">Mar '26</div>
+        <div class="mval">+$4.4k</div>
+      </div><div class="month-card pos" onclick="filterMonth(&#39;2026-04&#39;)">
+        <div class="mlbl">Apr '26</div>
+        <div class="mval">+$3.5k</div>
+      </div></div>
+
+  <div class="filters">
+    <label>Result</label>
+    <select id="rf-res" onchange="renderResults()">
+      <option value="all">All</option>
+      <option value="WIN">Wins</option>
+      <option value="PLACE">Places</option>
+      <option value="LOSS">Losses</option>
+    </select>
+    <label>Model</label>
+    <select id="rf-model" onchange="renderResults()">
+      <option value="all">All models</option>
+      <option value="Golden">⭐ Golden</option>
+      <option value="M1+M2r">💎 M1+M2r</option>
+      <option value="M2r">🔬 M2r</option>
+      <option value="M1">⚡ M1</option>
+      <option value="S9">💫 S9</option>
+      <option value="S10">🌊 S10</option>
+      <option value="Other">📋 Other</option>
+      <option value="Low Data">⚠️ Low Data</option>
+      
+    </select>
+    <label>Month</label>
+    <select id="rf-month" onchange="renderResults()">
+      <option value="all">All months</option>
+    <option value="2026-04">Apr '26</option><option value="2026-03">Mar '26</option><option value="2026-02">Feb '26</option><option value="2026-01">Jan '26</option><option value="2025-12">Dec '25</option></select>
+    <input id="rf-search" type="text" placeholder="Search dog or track…" oninput="renderResults()" style="width:160px">
+    <span class="filter-count" id="res-count">36 bets</span>
+  </div>
+
+  <!-- Sub-tab strip for Bets / By Day / By Track / By Model -->
+  <div class="sub-tabs">
+    <button class="sub-tab-btn active" onclick="switchSub('bets', this)">📋 Bets</button>
+    <button class="sub-tab-btn" onclick="switchSub('days', this)">📅 By Day</button>
+    <button class="sub-tab-btn" onclick="switchSub('tracks', this)">🏟️ By Track</button>
+    <button class="sub-tab-btn" onclick="switchSub('models', this)">🎯 By Model</button>
+  </div>
+
+  <div id="sub-bets" class="sub-pane show">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th onclick="rSort(&#39;n&#39;)" class="sort-asc">#</th>
+        <th onclick="rSort(&#39;date&#39;)" class="">Date</th>
+        <th onclick="rSort(&#39;dog&#39;)" class="">Dog</th>
+        <th onclick="rSort(&#39;track&#39;)" class="">Track</th>
+        <th onclick="rSort(&#39;odds&#39;)" class="">Odds</th>
+        <th onclick="rSort(&#39;model&#39;)" class="">Model</th>
+        <th onclick="rSort(&#39;result&#39;)" class="">Result</th>
+        <th onclick="rSort(&#39;pos&#39;)" class="">Pos</th>
+        <th onclick="rSort(&#39;pnl&#39;)" class="">P&amp;L</th>
+        <th onclick="rSort(&#39;cum&#39;)" class="">Running</th>
+      </tr></thead>
+      <tbody id="results-tbody"><tr>
+      <td class="td-muted">1</td>
+      <td class="td-muted">2025-12-29</td>
+      <td style="font-weight:500">Motorsport</td>
+      <td class="td-muted">Nowra · R5</td>
+      <td class="td-num">$1.45</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$675</span></td>
+      <td><span class="pos td-num">+$675</span></td>
+    </tr><tr>
+      <td class="td-muted">2</td>
+      <td class="td-muted">2025-12-29</td>
+      <td style="font-weight:500">Steel Bullet</td>
+      <td class="td-muted">Angle Park · R7</td>
+      <td class="td-num">$1.70</td>
+      <td><span class="tag tag-m2r">🔬 M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$1,050</span></td>
+      <td><span class="pos td-num">+$1,725</span></td>
+    </tr><tr>
+      <td class="td-muted">3</td>
+      <td class="td-muted">2025-12-30</td>
+      <td style="font-weight:500">Brave Comet</td>
+      <td class="td-muted">Shepparton · R6</td>
+      <td class="td-num">$1.80</td>
+      <td><span class="tag tag-m2r">🔬 M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$1,200</span></td>
+      <td><span class="pos td-num">+$2,925</span></td>
+    </tr><tr>
+      <td class="td-muted">4</td>
+      <td class="td-muted">2025-12-30</td>
+      <td style="font-weight:500">Lucky Strike</td>
+      <td class="td-muted">Wagga · R8</td>
+      <td class="td-num">$3.40</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$3,600</span></td>
+      <td><span class="pos td-num">+$6,525</span></td>
+    </tr><tr>
+      <td class="td-muted">5</td>
+      <td class="td-muted">2025-12-31</td>
+      <td style="font-weight:500">Terrell Banner</td>
+      <td class="td-muted">Wentworth Park · R5</td>
+      <td class="td-num">$1.65</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$975</span></td>
+      <td><span class="pos td-num">+$7,500</span></td>
+    </tr><tr>
+      <td class="td-muted">6</td>
+      <td class="td-muted">2026-01-01</td>
+      <td style="font-weight:500">Ayden Warrior</td>
+      <td class="td-muted">Angle Park · R4</td>
+      <td class="td-num">$1.45</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$675</span></td>
+      <td><span class="pos td-num">+$8,175</span></td>
+    </tr><tr>
+      <td class="td-muted">7</td>
+      <td class="td-muted">2026-01-01</td>
+      <td style="font-weight:500">Queen Era</td>
+      <td class="td-muted">Sandown Park · R6</td>
+      <td class="td-num">$1.80</td>
+      <td><span class="tag tag-m2r">🔬 M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$1,200</span></td>
+      <td><span class="pos td-num">+$9,375</span></td>
+    </tr><tr>
+      <td class="td-muted">8</td>
+      <td class="td-muted">2026-01-01</td>
+      <td style="font-weight:500">Silver Ace</td>
+      <td class="td-muted">Nowra · R8</td>
+      <td class="td-num">$4.20</td>
+      <td><span class="tag tag-m1">⚡ M1</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$4,800</span></td>
+      <td><span class="pos td-num">+$14,175</span></td>
+    </tr><tr>
+      <td class="td-muted">9</td>
+      <td class="td-muted">2026-01-05</td>
+      <td style="font-weight:500">Storm Rider</td>
+      <td class="td-muted">Sandown Park · R9</td>
+      <td class="td-num">$5.00</td>
+      <td><span class="tag tag-m1">⚡ M1</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$6,000</span></td>
+      <td><span class="pos td-num">+$20,175</span></td>
+    </tr><tr>
+      <td class="td-muted">10</td>
+      <td class="td-muted">2026-01-06</td>
+      <td style="font-weight:500">Bit Of Potash</td>
+      <td class="td-muted">Nowra · R5</td>
+      <td class="td-num">$8.00</td>
+      <td><span class="tag tag-m1">⚡ M1</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$10,500</span></td>
+      <td><span class="pos td-num">+$30,675</span></td>
+    </tr><tr>
+      <td class="td-muted">11</td>
+      <td class="td-muted">2026-01-06</td>
+      <td style="font-weight:500">Romp Tin</td>
+      <td class="td-muted">Mandurah · R7</td>
+      <td class="td-num">$5.20</td>
+      <td><span class="tag tag-m1m2r">💎 M1+M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$6,300</span></td>
+      <td><span class="pos td-num">+$36,975</span></td>
+    </tr><tr>
+      <td class="td-muted">12</td>
+      <td class="td-muted">2026-01-07</td>
+      <td style="font-weight:500">Flash Gordon</td>
+      <td class="td-muted">Shepparton · R4</td>
+      <td class="td-num">$1.50</td>
+      <td><span class="tag tag-m2r">🔬 M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$750</span></td>
+      <td><span class="pos td-num">+$37,725</span></td>
+    </tr><tr>
+      <td class="td-muted">13</td>
+      <td class="td-muted">2026-01-07</td>
+      <td style="font-weight:500">Night Rider</td>
+      <td class="td-muted">Geelong · R8</td>
+      <td class="td-num">$2.40</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="plc-txt">PLACE</td>
+      <td class="td-muted">3rd</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$36,225</span></td>
+    </tr><tr>
+      <td class="td-muted">14</td>
+      <td class="td-muted">2026-01-08</td>
+      <td style="font-weight:500">Aston Joe</td>
+      <td class="td-muted">Geelong · R5</td>
+      <td class="td-num">$5.00</td>
+      <td><span class="tag tag-m1">⚡ M1</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$6,000</span></td>
+      <td><span class="pos td-num">+$42,225</span></td>
+    </tr><tr>
+      <td class="td-muted">15</td>
+      <td class="td-muted">2026-01-10</td>
+      <td style="font-weight:500">Thunder Road</td>
+      <td class="td-muted">Angle Park · R6</td>
+      <td class="td-num">$1.55</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="los-txt">4th</td>
+      <td class="td-muted">4th</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$40,725</span></td>
+    </tr><tr>
+      <td class="td-muted">16</td>
+      <td class="td-muted">2026-01-14</td>
+      <td style="font-weight:500">Tinker Conall</td>
+      <td class="td-muted">Mandurah · R8</td>
+      <td class="td-num">$7.50</td>
+      <td><span class="tag tag-m1">⚡ M1</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$9,750</span></td>
+      <td><span class="pos td-num">+$50,475</span></td>
+    </tr><tr>
+      <td class="td-muted">17</td>
+      <td class="td-muted">2026-01-14</td>
+      <td style="font-weight:500">Woolgoolga</td>
+      <td class="td-muted">Wentworth Park · R6</td>
+      <td class="td-num">$6.00</td>
+      <td><span class="tag tag-m1m2r">💎 M1+M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$7,500</span></td>
+      <td><span class="pos td-num">+$57,975</span></td>
+    </tr><tr>
+      <td class="td-muted">18</td>
+      <td class="td-muted">2026-01-16</td>
+      <td style="font-weight:500">Gold Rush</td>
+      <td class="td-muted">Angle Park · R4</td>
+      <td class="td-num">$1.55</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$825</span></td>
+      <td><span class="pos td-num">+$58,800</span></td>
+    </tr><tr>
+      <td class="td-muted">19</td>
+      <td class="td-muted">2026-02-03</td>
+      <td style="font-weight:500">Dark Horse</td>
+      <td class="td-muted">Nowra · R7</td>
+      <td class="td-num">$4.60</td>
+      <td><span class="tag tag-m1">⚡ M1</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$5,400</span></td>
+      <td><span class="pos td-num">+$64,200</span></td>
+    </tr><tr>
+      <td class="td-muted">20</td>
+      <td class="td-muted">2026-02-05</td>
+      <td style="font-weight:500">Fire Starter</td>
+      <td class="td-muted">Mandurah · R8</td>
+      <td class="td-num">$6.50</td>
+      <td><span class="tag tag-m1m2r">💎 M1+M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$8,250</span></td>
+      <td><span class="pos td-num">+$72,450</span></td>
+    </tr><tr>
+      <td class="td-muted">21</td>
+      <td class="td-muted">2026-02-10</td>
+      <td style="font-weight:500">Commanche Jack</td>
+      <td class="td-muted">Wentworth Park · R7</td>
+      <td class="td-num">$1.45</td>
+      <td><span class="tag tag-m2r">🔬 M2r</span></td>
+      <td class="plc-txt">PLACE</td>
+      <td class="td-muted">2nd</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$70,950</span></td>
+    </tr><tr>
+      <td class="td-muted">22</td>
+      <td class="td-muted">2026-02-11</td>
+      <td style="font-weight:500">Silver Lining</td>
+      <td class="td-muted">Angle Park · R4</td>
+      <td class="td-num">$1.70</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$1,050</span></td>
+      <td><span class="pos td-num">+$72,000</span></td>
+    </tr><tr>
+      <td class="td-muted">23</td>
+      <td class="td-muted">2026-02-17</td>
+      <td style="font-weight:500">Gold Fever</td>
+      <td class="td-muted">Shepparton · R5</td>
+      <td class="td-num">$1.80</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="los-txt">4th</td>
+      <td class="td-muted">4th</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$70,500</span></td>
+    </tr><tr>
+      <td class="td-muted">24</td>
+      <td class="td-muted">2026-02-19</td>
+      <td style="font-weight:500">Almost</td>
+      <td class="td-muted">Wentworth Park · R9</td>
+      <td class="td-num">$6.50</td>
+      <td><span class="tag tag-m1m2r">💎 M1+M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$8,250</span></td>
+      <td><span class="pos td-num">+$78,750</span></td>
+    </tr><tr>
+      <td class="td-muted">25</td>
+      <td class="td-muted">2026-03-05</td>
+      <td style="font-weight:500">Jason Rose</td>
+      <td class="td-muted">Shepparton · R6</td>
+      <td class="td-num">$3.40</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$3,600</span></td>
+      <td><span class="pos td-num">+$82,350</span></td>
+    </tr><tr>
+      <td class="td-muted">26</td>
+      <td class="td-muted">2026-03-10</td>
+      <td style="font-weight:500">Joker Bonus</td>
+      <td class="td-muted">Grafton · R8</td>
+      <td class="td-num">$2.00</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$1,500</span></td>
+      <td><span class="pos td-num">+$83,850</span></td>
+    </tr><tr>
+      <td class="td-muted">27</td>
+      <td class="td-muted">2026-03-10</td>
+      <td style="font-weight:500">Nikita Bale</td>
+      <td class="td-muted">Ballarat · R13</td>
+      <td class="td-num">$4.80</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="los-txt">4th</td>
+      <td class="td-muted">4th</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$82,350</span></td>
+    </tr><tr>
+      <td class="td-muted">28</td>
+      <td class="td-muted">2026-03-18</td>
+      <td style="font-weight:500">Silver Bullet</td>
+      <td class="td-muted">Shepparton · R7</td>
+      <td class="td-num">$1.55</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$825</span></td>
+      <td><span class="pos td-num">+$83,175</span></td>
+    </tr><tr>
+      <td class="td-muted">29</td>
+      <td class="td-muted">2026-04-12</td>
+      <td style="font-weight:500">Brave Thunder</td>
+      <td class="td-muted">Sandown Park · R5</td>
+      <td class="td-num">$1.55</td>
+      <td><span class="tag tag-m2r">🔬 M2r</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$825</span></td>
+      <td><span class="pos td-num">+$84,000</span></td>
+    </tr><tr>
+      <td class="td-muted">30</td>
+      <td class="td-muted">2026-04-13</td>
+      <td style="font-weight:500">Mallee Beauty</td>
+      <td class="td-muted">Cannington · R4</td>
+      <td class="td-num">$1.45</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$675</span></td>
+      <td><span class="pos td-num">+$84,675</span></td>
+    </tr><tr>
+      <td class="td-muted">31</td>
+      <td class="td-muted">2026-04-13</td>
+      <td style="font-weight:500">Fast Thinker</td>
+      <td class="td-muted">Murray Bridge · R5</td>
+      <td class="td-num">$2.80</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$2,700</span></td>
+      <td><span class="pos td-num">+$87,375</span></td>
+    </tr><tr>
+      <td class="td-muted">32</td>
+      <td class="td-muted">2026-04-13</td>
+      <td style="font-weight:500">Dollar Bucks</td>
+      <td class="td-muted">Sandown Park · R10</td>
+      <td class="td-num">$5.50</td>
+      <td><span class="tag tag-m1">⚡ M1</span></td>
+      <td class="los-txt">4th</td>
+      <td class="td-muted">4th</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$85,875</span></td>
+    </tr><tr>
+      <td class="td-muted">33</td>
+      <td class="td-muted">2026-04-14</td>
+      <td style="font-weight:500">Joker Bonus</td>
+      <td class="td-muted">Grafton · R8</td>
+      <td class="td-num">$2.00</td>
+      <td><span class="tag tag-s9">💫 S9</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$1,500</span></td>
+      <td><span class="pos td-num">+$87,375</span></td>
+    </tr><tr>
+      <td class="td-muted">34</td>
+      <td class="td-muted">2026-04-14</td>
+      <td style="font-weight:500">Nikita Bale</td>
+      <td class="td-muted">Ballarat · R13</td>
+      <td class="td-num">$4.80</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="los-txt">4th</td>
+      <td class="td-muted">4th</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$85,875</span></td>
+    </tr><tr>
+      <td class="td-muted">35</td>
+      <td class="td-muted">2026-04-14</td>
+      <td style="font-weight:500">Ruby Show</td>
+      <td class="td-muted">Ballarat · R14</td>
+      <td class="td-num">$4.00</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="plc-txt">PLACE</td>
+      <td class="td-muted">2nd</td>
+      <td><span class="neg td-num">-$1,500</span></td>
+      <td><span class="pos td-num">+$84,375</span></td>
+    </tr><tr>
+      <td class="td-muted">36</td>
+      <td class="td-muted">2026-04-14</td>
+      <td style="font-weight:500">Mr Yellowstone</td>
+      <td class="td-muted">Murray Bridge · R6</td>
+      <td class="td-num">$2.50</td>
+      <td><span class="tag tag-s10">🌊 S10</span></td>
+      <td class="win-txt">WIN</td>
+      <td class="td-muted">1st</td>
+      <td><span class="pos td-num">+$2,250</span></td>
+      <td><span class="pos td-num">+$86,625</span></td>
+    </tr></tbody>
+    </table>
+  </div>
+  </div><!-- end sub-bets -->
+
+  <div id="sub-days" class="sub-pane">
+    <div class="sub-desc">One row per race day. Shows daily P/L, running cumulative P/L, and the day's best win. Reflects current filters above.</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th onclick="sortDays('date')" class="sort-asc">Date</th>
+          <th onclick="sortDays('bets')">Bets</th>
+          <th onclick="sortDays('wins')">Wins</th>
+          <th onclick="sortDays('wpct')">Win %</th>
+          <th onclick="sortDays('pnl')">Day P/L</th>
+          <th onclick="sortDays('cum')">Cumulative</th>
+          <th>Best Win</th>
+        </tr></thead>
+        <tbody id="days-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="sub-tracks" class="sub-pane">
+    <div class="sub-desc">Track performance across every bet in view. ROI based on flat $1,500 stake.</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th onclick="sortTracks('name')">Track</th>
+          <th onclick="sortTracks('bets')">Bets</th>
+          <th onclick="sortTracks('wins')">Wins</th>
+          <th onclick="sortTracks('wpct')">Win %</th>
+          <th onclick="sortTracks('ppct')">Place %</th>
+          <th onclick="sortTracks('pnl')" class="sort-desc">Total P/L</th>
+          <th onclick="sortTracks('roi')">ROI</th>
+        </tr></thead>
+        <tbody id="tracks-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="sub-models" class="sub-pane">
+    <div class="sub-desc">System-by-system breakdown across the filtered bets. P/L and ROI only meaningful for the specific systems (Golden, M1, M2r, M1+M2r, S9, S10).</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Model</th>
+          <th onclick="sortSubModels('bets')">Bets</th>
+          <th onclick="sortSubModels('wins')">Wins</th>
+          <th onclick="sortSubModels('wpct')">Win %</th>
+          <th onclick="sortSubModels('ppct')">Place %</th>
+          <th onclick="sortSubModels('pnl')">Total P/L</th>
+          <th onclick="sortSubModels('roi')">ROI</th>
+        </tr></thead>
+        <tbody id="submodels-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: MODELS
+════════════════════════════════════════════════════════ -->
+<div id="page-performance" class="page">
+  <div class="section-title">Model Performance</div>
+  <div class="section-sub">Historical stats per selection system. Click a model to filter the Results table.</div>
+  <div id="model-rows" class="model-rows"><div class="model-row" onclick="filterToModel(&#39;Golden&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">⭐</span>
+        <div>
+          <div class="model-label">Golden</div>
+          
+          <div class="model-sub">0.32/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">18</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">77.8%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">94.4%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val pos">+91.4%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill " style="width:29.248%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          12/69 days
+        </span>
+      </div>
+    </div><div class="model-row" onclick="filterToModel(&#39;M1&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">⚡</span>
+        <div>
+          <div class="model-label">M1</div>
+          
+          <div class="model-sub">0.14/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">10</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">70.0%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">90.0%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val pos">+147.2%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill " style="width:47.104%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          8/69 days
+        </span>
+      </div>
+    </div><div class="model-row" onclick="filterToModel(&#39;M2r&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">🔬</span>
+        <div>
+          <div class="model-label">M2r</div>
+          
+          <div class="model-sub">0.20/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">22</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">77.3%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">90.9%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val pos">+68.4%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill " style="width:21.888%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          14/69 days
+        </span>
+      </div>
+    </div><div class="model-row" onclick="filterToModel(&#39;M1+M2r&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">💎</span>
+        <div>
+          <div class="model-label">M1+M2r</div>
+          
+          <div class="model-sub">0.04/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">4</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">100.0%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">100.0%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val pos">+312.5%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill " style="width:100%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          3/69 days
+        </span>
+      </div>
+    </div><div class="model-row" onclick="filterToModel(&#39;S9&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">💫</span>
+        <div>
+          <div class="model-label">S9</div>
+          
+          <div class="model-sub">0.14/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">14</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">78.6%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">92.9%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val pos">+78.6%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill " style="width:25.151999999999997%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          10/69 days
+        </span>
+      </div>
+    </div><div class="model-row" onclick="filterToModel(&#39;S10&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">🌊</span>
+        <div>
+          <div class="model-label">S10</div>
+          
+          <div class="model-sub">0.20/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">22</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">36.4%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">63.6%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val neg">-8.2%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill neg" style="width:2.624%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          14/69 days
+        </span>
+      </div>
+    </div><div class="model-row" onclick="filterToModel(&#39;Other&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">📋</span>
+        <div>
+          <div class="model-label">Other</div>
+          
+          <div class="model-sub">0.65/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">128</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">30.5%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">59.4%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val neg">-12.5%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill neg" style="width:4%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          45/69 days
+        </span>
+      </div>
+    </div><div class="model-row" onclick="filterToModel(&#39;Low Data&#39;)" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">⚠️</span>
+        <div>
+          <div class="model-label">Low Data</div>
+          
+          <div class="model-sub">0.80/day</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">196</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">29.1%</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">62.2%</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val neg">-18.4%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill neg" style="width:5.888%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          55/69 days
+        </span>
+      </div>
+    </div></div>
+
+  <div class="divider"></div>
+  <div class="section-label">Position Breakdown</div>
+  <div id="pos-breakdown" class="pos-breakdown"><div class="pos-block">
+      <div class="pos-block-title">⭐ Golden Rule</div>
+      <div class="pos-row">
+          <span class="pos-lbl">1st</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:77.77777777777779%"></div></div>
+          <span class="pos-pct">78%</span>
+          <span class="pos-n">14</span>
+        </div><div class="pos-row">
+          <span class="pos-lbl">2nd</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:16.666666666666664%"></div></div>
+          <span class="pos-pct">17%</span>
+          <span class="pos-n">3</span>
+        </div><div class="pos-row">
+          <span class="pos-lbl">3rd</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:5.555555555555555%"></div></div>
+          <span class="pos-pct">6%</span>
+          <span class="pos-n">1</span>
+        </div><div class="pos-row">
+          <span class="pos-lbl">4th+</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:0%"></div></div>
+          <span class="pos-pct">0%</span>
+          <span class="pos-n">0</span>
+        </div>
+    </div><div class="pos-block">
+      <div class="pos-block-title">All Selections</div>
+      <div class="pos-row">
+          <span class="pos-lbl">1st</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:55.55555555555556%"></div></div>
+          <span class="pos-pct">56%</span>
+          <span class="pos-n">20</span>
+        </div><div class="pos-row">
+          <span class="pos-lbl">2nd</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:25%"></div></div>
+          <span class="pos-pct">25%</span>
+          <span class="pos-n">9</span>
+        </div><div class="pos-row">
+          <span class="pos-lbl">3rd</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:13.88888888888889%"></div></div>
+          <span class="pos-pct">14%</span>
+          <span class="pos-n">5</span>
+        </div><div class="pos-row">
+          <span class="pos-lbl">4th+</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:5.555555555555555%"></div></div>
+          <span class="pos-pct">6%</span>
+          <span class="pos-n">2</span>
+        </div>
+    </div></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: TRACKS
+════════════════════════════════════════════════════════ -->
+<div id="page-tracks" class="page">
+  <div class="section-title">Track Intelligence</div>
+  <div class="section-sub">Win and place rates per venue, sorted by win rate. Only tracks with recorded results shown.</div>
+
+  <div class="filters" style="margin-bottom:20px">
+    <label>Sort by</label>
+    <select id="track-sort" onchange="renderTracks()">
+      <option value="win">Win rate</option>
+      <option value="bets">Volume</option>
+      <option value="place">Place rate</option>
+      <option value="name">Name</option>
+    </select>
+    <input id="track-search" type="text" placeholder="Search track…" oninput="renderTracks()" style="width:140px">
+  </div>
+  <div id="track-grid" class="track-grid"><div class="track-card">
+      <div class="track-name">Cannington</div>
+      <div class="track-stats">
+        <span>6 bets</span>
+        <span style="color:var(--green)">83% W</span>
+        <span style="color:var(--blue)">100% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:83.33333333333334%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Shepparton</div>
+      <div class="track-stats">
+        <span>10 bets</span>
+        <span style="color:var(--green)">80% W</span>
+        <span style="color:var(--blue)">90% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:80%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Wentworth Park</div>
+      <div class="track-stats">
+        <span>7 bets</span>
+        <span style="color:var(--green)">71% W</span>
+        <span style="color:var(--blue)">86% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:71.42857142857143%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Nowra</div>
+      <div class="track-stats">
+        <span>9 bets</span>
+        <span style="color:var(--green)">67% W</span>
+        <span style="color:var(--blue)">78% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:66.66666666666666%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Wagga</div>
+      <div class="track-stats">
+        <span>3 bets</span>
+        <span style="color:var(--green)">67% W</span>
+        <span style="color:var(--blue)">67% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:66.66666666666666%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Sandown Park</div>
+      <div class="track-stats">
+        <span>8 bets</span>
+        <span style="color:var(--green)">63% W</span>
+        <span style="color:var(--blue)">88% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:62.5%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Mandurah</div>
+      <div class="track-stats">
+        <span>8 bets</span>
+        <span style="color:var(--green)">63% W</span>
+        <span style="color:var(--blue)">75% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:62.5%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Murray Bridge</div>
+      <div class="track-stats">
+        <span>5 bets</span>
+        <span style="color:var(--green)">60% W</span>
+        <span style="color:var(--blue)">80% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:60%;background:var(--green)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Angle Park</div>
+      <div class="track-stats">
+        <span>12 bets</span>
+        <span style="color:var(--green)">58% W</span>
+        <span style="color:var(--blue)">83% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:58.333333333333336%;background:var(--gold)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Geelong</div>
+      <div class="track-stats">
+        <span>6 bets</span>
+        <span style="color:var(--green)">50% W</span>
+        <span style="color:var(--blue)">83% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:50%;background:var(--gold)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Bendigo</div>
+      <div class="track-stats">
+        <span>4 bets</span>
+        <span style="color:var(--green)">50% W</span>
+        <span style="color:var(--blue)">75% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:50%;background:var(--gold)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Grafton</div>
+      <div class="track-stats">
+        <span>4 bets</span>
+        <span style="color:var(--green)">50% W</span>
+        <span style="color:var(--blue)">75% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:50%;background:var(--gold)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Ballarat</div>
+      <div class="track-stats">
+        <span>8 bets</span>
+        <span style="color:var(--green)">38% W</span>
+        <span style="color:var(--blue)">63% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:37.5%;background:var(--red)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Capalaba</div>
+      <div class="track-stats">
+        <span>18 bets</span>
+        <span style="color:var(--green)">22% W</span>
+        <span style="color:var(--blue)">67% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:22.22222222222222%;background:var(--red)"></div>
+      </div>
+    </div><div class="track-card">
+      <div class="track-name">Healesville</div>
+      <div class="track-stats">
+        <span>14 bets</span>
+        <span style="color:var(--green)">21% W</span>
+        <span style="color:var(--blue)">57% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:21.428571428571427%;background:var(--red)"></div>
+      </div>
+    </div></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: GLOSSARY
+════════════════════════════════════════════════════════ -->
+<div id="page-glossary" class="page">
+  <div class="section-title">Selections Guide</div>
+  <div class="section-sub">How every model works — criteria, what the numbers mean, and how to read each section.</div>
+  <div id="glossary-grid" class="glossary-grid"><div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">⭐</span>
+        <span class="gloss-name">Golden Rule</span>
+      </div>
+      <div class="gloss-criteria">Odds ≤ $2.00 AND ≤1 dog missing box data in the race</div>
+      <div class="gloss-desc">The highest-conviction selections. Short-priced favourites in races with near-complete historical time data. The combination of short odds and complete data makes these the most reliable signal in the system.</div>
+      <div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">18</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">77.8%</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv pos">+91.4%</div></div>
+      </div>
+    </div><div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">⚡</span>
+        <span class="gloss-name">M1 — Longshot</span>
+      </div>
+      <div class="gloss-criteria">Odds ≥ $5.00 · Weekday · Race ≥ R4 · 0 missing · No bad tracks</div>
+      <div class="gloss-desc">Targets big-priced dogs where the model's time rankings strongly disagree with the market. When the model has a dog ranked #1 across all metrics but the market has it at $5+, that gap represents potential value.</div>
+      <div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">10</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">70.0%</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv pos">+147.2%</div></div>
+      </div>
+    </div><div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">🔬</span>
+        <span class="gloss-name">M2r — Dual Rank</span>
+      </div>
+      <div class="gloss-criteria">avg_projected_race_dist_rank = 1 AND avg_actual_track_dist_rank = 1 · Weekday · R≥4</div>
+      <div class="gloss-desc">The dog must rank #1 on both its projected race distance time AND its actual track+distance time simultaneously. Two independent metrics pointing to the same dog is a strong signal.</div>
+      <div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">22</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">77.3%</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv pos">+68.4%</div></div>
+      </div>
+    </div><div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">💎</span>
+        <span class="gloss-name">M1+M2r — Double Qualifier</span>
+      </div>
+      <div class="gloss-criteria">Satisfies BOTH M1 and M2r criteria simultaneously</div>
+      <div class="gloss-desc">The rarest and highest-conviction selection type. A dog that is both a longshot ($5+) AND ranks #1 on both time metrics. These are infrequent but represent the strongest disagreement between model and market.</div>
+      <div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">4</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">100.0%</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv pos">+312.5%</div></div>
+      </div>
+    </div><div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">💫</span>
+        <span class="gloss-name">S9 — Premium Overlap</span>
+      </div>
+      <div class="gloss-criteria">Golden Rule criteria AND Dual Rank=1 criteria both satisfied</div>
+      <div class="gloss-desc">The intersection of the two strongest signals: a short-priced favourite in a complete-data race that also ranks #1 on both projected and actual time metrics. Best of both worlds.</div>
+      <div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">14</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">78.6%</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv pos">+78.6%</div></div>
+      </div>
+    </div><div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">🌊</span>
+        <span class="gloss-name">S10 — Broader Pool</span>
+      </div>
+      <div class="gloss-criteria">Odds &gt; $2.00 OR ≥2 dogs missing box data in the race</div>
+      <div class="gloss-desc">Selections outside the Golden criteria — either longer-priced or in races with some missing data. Lower confidence than Golden but still ranked #1 or #2 by the pipeline. Worth monitoring but treat with more caution.</div>
+      <div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">22</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">36.4%</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv neg">-8.2%</div></div>
+      </div>
+    </div><div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">⚠️</span>
+        <span class="gloss-name">Low Data</span>
+      </div>
+      <div class="gloss-criteria">More than 2 dogs missing box actual time data in the race</div>
+      <div class="gloss-desc">Selections in races where the data picture is incomplete. The model can still rank dogs but with less information to work with. Historical win rate is meaningfully lower — only consider if comfortable with the additional uncertainty.</div>
+      <div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">196</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">29.1%</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv neg">-18.4%</div></div>
+      </div>
+    </div></div>
+
+  <div class="divider"></div>
+  <div class="section-label">Reading the Results Table</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:28px">
+    <div class="gloss-card">
+      <div class="gloss-head"><span class="gloss-emoji">📊</span><span class="gloss-name">ROI</span></div>
+      <div class="gloss-desc">Return on Investment. A ROI of +50% means for every $1,500 staked, you returned $2,250 on average. Calculated as (total returns − total staked) ÷ total staked × 100.</div>
+    </div>
+    <div class="gloss-card">
+      <div class="gloss-head"><span class="gloss-emoji">📈</span><span class="gloss-name">Running P/L</span></div>
+      <div class="gloss-desc">Cumulative profit or loss from bet one to now. Green means you're ahead of where you started; red means behind. Resets to zero at the beginning of tracking.</div>
+    </div>
+    <div class="gloss-card">
+      <div class="gloss-head"><span class="gloss-emoji">🎯</span><span class="gloss-name">Place Rate</span></div>
+      <div class="gloss-desc">How often a selection finishes 1st, 2nd or 3rd. A high place rate with lower win rate indicates a consistent model that's worth watching for each-way opportunities.</div>
+    </div>
+    <div class="gloss-card">
+      <div class="gloss-head"><span class="gloss-emoji">📅</span><span class="gloss-name">Frequency</span></div>
+      <div class="gloss-desc">How many selections per day a model generates on average. A model at 0.32/day fires roughly every 3 days. Lower frequency models need more patience but can be higher conviction.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Greyhound Intelligence Dashboard · Updated 2026-04-15 · 36 bets tracked
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// DATA INJECTION — populated by Python generator
+// ══════════════════════════════════════════════════════════════════
+const TODAY_DATE    = "2026-04-17";
+const BANKROLL      = 10000;
+
+// Today's selections — array of selection objects
+const TODAY_SEL     = [{"dog": "Red Rock Razzle", "track": "Goulburn", "race": "7", "box": "4", "odds": 2.0, "missing": 0, "time": "", "category": "golden", "tag": "Golden"}, {"dog": "Tiger Tails", "track": "The Gardens", "race": "8", "box": "2", "odds": 1.75, "missing": 0, "time": "", "category": "golden", "tag": "Golden"}, {"dog": "Prince Legacy", "track": "Richmond", "race": "11", "box": "6", "odds": 1.28, "missing": 0, "time": "", "category": "golden", "tag": "S9"}, {"dog": "Trunkey Villain", "track": "Goulburn", "race": "7", "box": "3", "odds": 7.0, "missing": 0, "time": "", "category": "m1m2r", "tag": "M1+M2r"}, {"dog": "Paw Zeva", "track": "Goulburn", "race": "7", "box": "1", "odds": 8.5, "missing": 0, "time": "", "category": "s9", "tag": "S9"}, {"dog": "Daintree Shady", "track": "Murray Bridge", "race": "4", "box": "5", "odds": 6.0, "missing": 0, "time": "", "category": "s9", "tag": "S9"}, {"dog": "Nothin' But Cash", "track": "Richmond", "race": "6", "box": "7", "odds": 6.5, "missing": 0, "time": "", "category": "m1", "tag": "M1"}, {"dog": "Paducah", "track": "Murray Bridge", "race": "11", "box": "5", "odds": 4.0, "missing": 4, "time": "", "category": "lowdata", "tag": "Low"}, {"dog": "Avoid The Noise", "track": "Ladbrokes Q1 Lakeside", "race": "3", "box": "2", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Mango Beach", "track": "Ladbrokes Q1 Lakeside", "race": "3", "box": "3", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Wildash Magic", "track": "Ladbrokes Q1 Lakeside", "race": "3", "box": "4", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Lakoda Domino", "track": "Ladbrokes Q1 Lakeside", "race": "3", "box": "5", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Franky Two Toes", "track": "Ladbrokes Q1 Lakeside", "race": "3", "box": "6", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Goodbye Mate", "track": "Goulburn", "race": "7", "box": "6", "odds": 27.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "How High", "track": "Goulburn", "race": "7", "box": "5", "odds": 2.2, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Written In Gold", "track": "Goulburn", "race": "7", "box": "2", "odds": 31.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Fast Headache", "track": "Murray Bridge", "race": "4", "box": "2", "odds": 101.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Binnaway Pearl", "track": "Murray Bridge", "race": "4", "box": "1", "odds": 2.05, "missing": 0, "time": "", "category": "other", "tag": "Other"}, {"dog": "Pet Detective", "track": "Murray Bridge", "race": "4", "box": "4", "odds": 2.7, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Fantastic Ada", "track": "Murray Bridge", "race": "4", "box": "3", "odds": 21.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Yvonne's Pick", "track": "Murray Bridge", "race": "4", "box": "7", "odds": 101.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Giggle Monster", "track": "Murray Bridge", "race": "11", "box": "1", "odds": 2.4, "missing": 4, "time": "", "category": "other", "tag": ""}, {"dog": "Aster Ballistic", "track": "Murray Bridge", "race": "11", "box": "2", "odds": 7.0, "missing": 4, "time": "", "category": "other", "tag": ""}, {"dog": "Flying Hugo", "track": "Murray Bridge", "race": "4", "box": "6", "odds": 4.6, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Royale Maple", "track": "Murray Bridge", "race": "11", "box": "3", "odds": 9.0, "missing": 4, "time": "", "category": "other", "tag": ""}, {"dog": "Sponsorship", "track": "Murray Bridge", "race": "11", "box": "4", "odds": 3.0, "missing": 4, "time": "", "category": "other", "tag": ""}, {"dog": "Hendrix", "track": "Richmond", "race": "6", "box": "1", "odds": 3.5, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Mister Anatoly", "track": "Richmond", "race": "6", "box": "2", "odds": 3.1, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Star Pedro", "track": "Richmond", "race": "6", "box": "3", "odds": 7.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Amalfi Blue", "track": "Ladbrokes Q1 Lakeside", "race": "3", "box": "7", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Big Ted", "track": "Goulburn", "race": "7", "box": "7", "odds": 34.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Ohtani Force", "track": "Ladbrokes Q1 Lakeside", "race": "3", "box": "1", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Loretta Keeping", "track": "Richmond", "race": "6", "box": "6", "odds": 3.2, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Just Braxton", "track": "Richmond", "race": "6", "box": "5", "odds": 26.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Well Read", "track": "Richmond", "race": "6", "box": "4", "odds": 16.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Angel Meg", "track": "Richmond", "race": "11", "box": "1", "odds": 21.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Tatiana", "track": "Richmond", "race": "11", "box": "2", "odds": 15.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Rogue Agent", "track": "Richmond", "race": "11", "box": "3", "odds": 8.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Shadow Dash", "track": "Richmond", "race": "11", "box": "1", "odds": 0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Harada Solo", "track": "Richmond", "race": "11", "box": "2", "odds": 13.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Angry Mac", "track": "Richmond", "race": "11", "box": "5", "odds": 12.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Angel's Emma", "track": "Richmond", "race": "11", "box": "4", "odds": 20.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Always Brave", "track": "Richmond", "race": "11", "box": "8", "odds": 16.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Anyone But You", "track": "Richmond", "race": "11", "box": "7", "odds": 14.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Chloe's Comet", "track": "The Gardens", "race": "8", "box": "1", "odds": 6.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Speed Dial", "track": "The Gardens", "race": "8", "box": "3", "odds": 11.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Rhonda Full Day", "track": "The Gardens", "race": "8", "box": "4", "odds": 21.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Hooked On Iraola", "track": "The Gardens", "race": "8", "box": "5", "odds": 12.0, "missing": 0, "time": "", "category": "other", "tag": ""}, {"dog": "Reiko Batty", "track": "The Gardens", "race": "8", "box": "6", "odds": 3.9, "missing": 0, "time": "", "category": "other", "tag": "Other"}, {"dog": "Pull The Trigger", "track": "The Gardens", "race": "8", "box": "7", "odds": 8.5, "missing": 0, "time": "", "category": "other", "tag": ""}];
+
+// Yesterday's results
+const YESTERDAY     = {"bets": 0, "wins": 0, "places": 0, "roi": 0, "dogs": []};
+
+// Full results history — [n, date, dog, track, race, odds, result, pos, pnl, cumPnl, tag]
+const RESULTS_RAW   = [[1, "2025-12-29", "Loving It Sweet", "Angle Park", "R1", 1.4, "PLACE", 2, -1500.0, -1500, "none"], [2, "2025-12-29", "Scooby Danger", "Launceston", "R2", 1.55, "WIN", 1, 825.0, -675, "none"], [3, "2025-12-29", "Furious", "Maitland", "R2", 2.1, "PLACE", 2, -1500.0, -2175, "none"], [4, "2025-12-29", "Reggae Ethics", "Maitland", "R10", 1.28, "WIN", 1, 420.0, -1755, "none"], [5, "2025-12-29", "Where's Fernando", "Nowra", "R8", 1.4, "WIN", 1, 600.0, -1155, "M2r"], [6, "2025-12-29", "Figure It Out", "Shepparton", "R6", 4.6, "WIN", 1, 5400.0, 4245, "M2r"], [7, "2025-12-29", "Out Of Luck", "Wagga", "R2", 1.5, "WIN", 1, 750.0, 4995, "none"], [8, "2025-12-29", "Maddy Giblet", "Warrnambool", "R10", 2.4, "PLACE", 2, -1500.0, 3495, "none"], [9, "2025-12-29", "Good Odds Mario", "Warrnambool", "R12", 1.45, "WIN", 1, 675.0, 4170, "M2r"], [10, "2025-12-30", "Aston Exclusive", "Geelong", "R12", 2.05, "WIN", 1, 1575.0, 5745, "M2r"], [11, "2025-12-30", "Loco Miss", "Gosford", "R11", 1.35, "WIN", 1, 525.0, 6270, "M2r"], [12, "2025-12-30", "Cruisin' Poppy", "Horsham", "R1", 6.0, "5th", 5, -1500.0, 4770, "none"], [13, "2025-12-30", "Paw Uma", "Horsham", "R12", 1.4, "PLACE", 2, -1500.0, 3270, "none"], [14, "2025-12-30", "Blackpool Trip", "Launceston", "R3", 4.4, "PLACE", 2, -1500.0, 1770, "none"], [15, "2025-12-30", "Rattle Your Dags", "Mandurah", "R2", 2.7, "PLACE", 2, -1500.0, 270, "none"], [16, "2025-12-30", "Sunset Chromium", "Mandurah", "R7", 2.4, "4th", 4, -1500.0, -1230, "M2r"], [17, "2025-12-30", "Finniss Sunrise", "Murray Bridge Straight", "R8", 3.5, "6th", 6, -1500.0, -2730, "none"], [18, "2025-12-30", "Flex For Me", "Warragul", "R12", 7.0, "PLACE", 2, -1500.0, -4230, "M1+M2r"], [19, "2025-12-31", "Banora Beach", "Capalaba", "R6", 4.0, "PLACE", 2, -1500.0, -5730, "none"], [20, "2025-12-31", "Another Idea", "Capalaba", "R9", 2.8, "PLACE", 2, -1500.0, -7230, "none"], [21, "2025-12-31", "Hunterview Jack", "Meadows", "R1", 4.4, "3th", 3, -1500.0, -8730, "none"], [22, "2025-12-31", "Comanche Chief", "Sale", "R2", 1.85, "PLACE", 2, -1500.0, -10230, "none"], [23, "2025-12-31", "Fine Shine", "Temora", "R5", 1.9, "WIN", 1, 1350.0, -8880, "M2r"], [24, "2026-01-01", "Unleash Innocent", "Angle Park", "R2", 67.0, "5th", 5, -1500.0, -10380, "none"], [25, "2026-01-01", "Mallee Beauty", "Angle Park", "R4", 1.08, "WIN", 1, 120.0, -10260, "M2r"], [26, "2026-01-01", "Starlight Riot", "Angle Park", "R5", 2.2, "PLACE", 2, -1500.0, -11760, "M2r"], [27, "2026-01-01", "Zipping Lipa", "Ladbrokes Q2 Parklands", "R3", null, "3th", 3, -1500.0, -13260, "none"], [28, "2026-01-01", "Zipping Kravitz", "Ladbrokes Q2 Parklands", "R7", null, "WIN", 1, -1500.0, -14760, "none"], [29, "2026-01-01", "West On Miley", "Mandurah", "R6", 3.3, "PLACE", 2, -1500.0, -16260, "none"], [30, "2026-01-01", "Intrepid Eagle", "Nowra", "R9", 1.9, "WIN", 1, 1350.0, -14910, "M2r"], [31, "2026-01-01", "Lady Rapid", "Shepparton", "R1", 1.4, "WIN", 1, 600.0, -14310, "none"], [32, "2026-01-01", "Pretty Pipa", "Warragul", "R5", 3.4, "WIN", 1, 3600.0, -10710, "none"], [33, "2026-01-01", "Romp Tin", "Warragul", "R11", 3.3, "WIN", 1, 3450.0, -7260, "M2r"], [34, "2026-01-01", "Illusive Lass", "Warrnambool", "R5", 2.6, "WIN", 1, 2400.0, -4860, "none"], [35, "2026-01-01", "Bit Of Potash", "Warrnambool", "R7", 8.0, "WIN", 1, 10500.0, 5640, "M1"], [36, "2026-01-01", "Hot Saki", "Warrnambool", "R9", 1.5, "WIN", 1, 750.0, 6390, "none"], [37, "2026-01-01", "Leap Of Faith", "Warrnambool", "R10", 1.6, "WIN", 1, 900.0, 7290, "none"], [38, "2026-01-01", "Classy Bandit", "Wentworth Park", "R11", 1.25, "WIN", 1, 375.0, 7665, "M2r"], [39, "2026-01-02", "Fernley Girl", "Healesville", "R7", 1.65, "WIN", 1, 975.0, 8640, "none"], [40, "2026-01-02", "Art Of Deception", "Ladbrokes Q1 Lakeside", "R5", null, "PLACE", 2, -1500.0, 7140, "none"], [41, "2026-01-02", "Flyaway Jack", "Ladbrokes Q1 Lakeside", "R8", null, "PLACE", 2, -1500.0, 5640, "none"], [42, "2026-01-02", "Idea's Girl", "Ladbrokes Q1 Lakeside", "R11", null, "4th", 4, -1500.0, 4140, "none"], [43, "2026-01-02", "Bern West Bolter", "Mandurah", "R2", 2.65, "WIN", 1, 2475.0, 6615, "none"], [44, "2026-01-02", "Vintage Racer", "The Gardens", "R6", 2.05, "WIN", 1, 1575.0, 8190, "none"], [45, "2026-01-02", "Bruce The Shark", "Wagga", "R1", 2.4, "PLACE", 2, -1500.0, 6690, "none"], [46, "2026-01-02", "Sakura Izmir", "Wagga", "R1", 3.2, "4th", 4, -1500.0, 5190, "none"], [47, "2026-01-02", "Turbo George", "Wagga", "R4", 1.5, "WIN", 1, 750.0, 5940, "M2r"], [48, "2026-01-02", "Tiggerlong Gill", "Wagga", "R4", 2.7, "PLACE", 2, -1500.0, 4440, "none"], [49, "2026-01-02", "Tarawi Therese", "Warragul", "R5", 1.1, "WIN", 1, 150.0, 4590, "M2r"], [50, "2026-01-03", "Zinfandel Austin", "Angle Park", "R8", 4.0, "5th", 5, -1500.0, 3090, "none"], [51, "2026-01-03", "Fearless Parker", "Cannington", "R10", 1.95, "WIN", 1, 1425.0, 4515, "none"], [52, "2026-01-03", "Deadly Cool", "Sale", "R7", 3.4, "PLACE", 3, -1500.0, 3015, "none"], [53, "2026-01-04", "Cashed Up Beth", "Capalaba", "R7", 2.15, "3th", 3, -1500.0, 1515, "none"], [54, "2026-01-04", "Luka Magic", "Darwin", "R7", 2.15, "3th", 3, -1500.0, 15, "none"], [55, "2026-01-04", "Sally Shine", "Mount Gambier", "R1", 10.0, "3th", 3, -1500.0, -1485, "none"], [56, "2026-01-04", "Outshine", "Murray Bridge", "R4", 1.85, "WIN", 1, 1275.0, -210, "none"], [57, "2026-01-04", "Beast Cut Loose", "Murray Bridge", "R4", 2.6, "PLACE", 2, -1500.0, -1710, "none"], [58, "2026-01-05", "Specked", "Angle Park", "R9", 2.0, "PLACE", 2, -1500.0, -3210, "none"], [59, "2026-01-05", "Bogan Riot", "Dubbo", "R3", 5.0, "6th", 6, -1500.0, -4710, "none"], [60, "2026-01-05", "Be A Cowboy", "Healesville", "R6", 3.6, "4th", 4, -1500.0, -6210, "none"], [61, "2026-01-05", "Mighty Hannibal", "Healesville", "R9", 31.0, "6th", 6, -1500.0, -7710, "none"], [62, "2026-01-05", "Cruella", "Healesville", "R12", 2.35, "3th", 3, -1500.0, -9210, "none"], [63, "2026-01-05", "Samjai", "Maitland", "R1", 6.0, "4th", 4, -1500.0, -10710, "none"], [64, "2026-01-05", "Gigabyte", "Mandurah", "R11", 1.6, "WIN", 1, 900.0, -9810, "none"], [65, "2026-01-05", "Skedaddle Lulu", "Nowra", "R2", 3.4, "6th", 6, -1500.0, -11310, "none"], [66, "2026-01-06", "Zinfandel Austin", "Angle Park", "R10", 4.0, "4th", 4, -1500.0, -12810, "M2r"], [67, "2026-01-06", "Sudoku Carmello", "Geelong", "R6", 3.3, "WIN", 1, 3450.0, -9360, "M2r"], [68, "2026-01-06", "Dollar Bucks", "Geelong", "R7", 4.6, "WIN", 1, 5400.0, -3960, "M2r"], [69, "2026-01-06", "Little Wildfire", "Mandurah", "R10", 4.0, "3th", 3, -1500.0, -5460, "M2r"], [70, "2026-01-06", "Natina", "Warragul", "R1", 1.85, "WIN", 1, 1275.0, -4185, "none"], [71, "2026-01-06", "High Contrast", "Warragul", "R2", 4.0, "3th", 3, -1500.0, -5685, "none"], [72, "2026-01-07", "Jed's Memory", "Bendigo", "R11", 2.8, "3th", 3, -1500.0, -7185, "none"], [73, "2026-01-07", "Bundy Blaze", "Capalaba", "R2", 1.85, "WIN", 1, 1275.0, -5910, "none"], [74, "2026-01-07", "Banora Beach", "Capalaba", "R5", 5.0, "PLACE", 3, -1500.0, -7410, "none"], [75, "2026-01-07", "Have Ignition", "Capalaba", "R11", 2.1, "PLACE", 2, -1500.0, -8910, "none"], [76, "2026-01-07", "Legends Told", "Rockhampton", "R3", 1.7, "WIN", 1, 1050.0, -7860, "none"], [77, "2026-01-07", "Brindle Motion", "Sale", "R1", 2.9, "PLACE", 2, -1500.0, -9360, "none"], [78, "2026-01-07", "Federal Player", "Taree", "R10", 2.3, "WIN", 1, 1950.0, -7410, "M2r"], [79, "2026-01-08", "Ruxley", "Hobart", "R2", 1.65, "PLACE", 3, -1500.0, -8910, "none"], [80, "2026-01-08", "Compton Copy", "Mount Gambier", "R10", 1.75, "WIN", 1, 1125.0, -7785, "none"], [81, "2026-01-08", "Nicko Queen", "Nowra", "R10", 4.4, "PLACE", 2, -1500.0, -9285, "none"], [82, "2026-01-09", "Oregon Janet", "Angle Park", "R1", 3.3, "3th", 3, -1500.0, -10785, "none"], [83, "2026-01-09", "Weblec Pebbles", "Angle Park", "R2", 1.4, "PLACE", 2, -1500.0, -12285, "none"], [84, "2026-01-09", "Mallee Beauty", "Angle Park", "R4", 1.12, "WIN", 1, 180.0, -12105, "M2r"], [85, "2026-01-09", "Hi There Frank", "Angle Park", "R9", 1.7, "WIN", 1, 1050.0, -11055, "M2r"], [86, "2026-01-09", "Melania Banner", "Richmond", "R4", 1.55, "WIN", 1, 825.0, -10230, "none"], [87, "2026-01-09", "Tiger Key Chum", "The Gardens", "R2", 3.5, "PLACE", 3, -1500.0, -11730, "none"], [88, "2026-01-09", "Mizuki Flash", "Townsville", "R10", 2.25, "6th", 6, -1500.0, -13230, "M2r"], [89, "2026-01-10", "Done Dealing", "The Gardens", "R4", 1.28, "PLACE", 3, -1500.0, -14730, "none"], [90, "2026-01-10", "Better Banjo", "Warrnambool", "R4", 1.95, "PLACE", 2, -1500.0, -16230, "none"], [91, "2026-01-11", "Bubba's Tyrant", "Capalaba", "R1", 1.35, "WIN", 1, 525.0, -15705, "none"], [92, "2026-01-11", "Feed The Flames", "Darwin", "R3", 3.8, "4th", 4, -1500.0, -17205, "none"], [93, "2026-01-11", "Not Bad Yourself", "Darwin", "R8", 6.5, "WIN", 1, 8250.0, -8955, "none"], [94, "2026-01-11", "Brave Ember", "Darwin", "R9", 1.55, "WIN", 1, 825.0, -8130, "none"], [95, "2026-01-11", "Crowie Unleashed", "Mount Gambier", "R2", 3.2, "PLACE", 2, -1500.0, -9630, "none"], [96, "2026-01-12", "Bend Your Ear", "Geelong", "R9", 3.4, "PLACE", 3, -1500.0, -11130, "M2r"], [97, "2026-01-12", "Cinnamon Swirl", "Gunnedah", "R2", 5.0, "6th", 6, -1500.0, -12630, "none"], [98, "2026-01-12", "Cambo's Ethics", "Maitland", "R2", 3.1, "4th", 4, -1500.0, -14130, "none"], [99, "2026-01-12", "Flash Ethics", "Maitland", "R7", 1.95, "3th", 3, -1500.0, -15630, "none"], [100, "2026-01-12", "Nicko King", "Nowra", "R10", 2.35, "WIN", 1, 2025.0, -13605, "M2r"], [101, "2026-01-13", "Our Bella Rose", "Angle Park", "R6", 1.8, "WIN", 1, 1200.0, -12405, "M2r"], [102, "2026-01-13", "Glory Shine", "Bulli", "R1", 5.5, "6th", 6, -1500.0, -13905, "none"], [103, "2026-01-13", "Little Bit Super", "Bulli", "R12", 1.7, "WIN", 1, 1050.0, -12855, "none"], [104, "2026-01-13", "Almost", "Gosford", "R8", 6.5, "PLACE", 2, -1500.0, -14355, "M1"], [105, "2026-01-13", "Close Talker", "Grafton", "R2", 9.0, "3th", 3, -1500.0, -15855, "none"], [106, "2026-01-13", "Dinosaur Deano", "Healesville", "R4", 3.4, "WIN", 1, 3600.0, -12255, "none"], [107, "2026-01-13", "Promises Made", "Hobart", "R6", 1.35, "WIN", 1, 525.0, -11730, "none"], [108, "2026-01-13", "Hara's Loki", "Ladbrokes Q1 Lakeside", "R1", null, "PLACE", 2, -1500.0, -13230, "none"], [109, "2026-01-13", "Fern Dreamer", "Murray Bridge Straight", "R1", 51.0, "3th", 3, -1500.0, -14730, "none"], [110, "2026-01-13", "Easy Aces", "Murray Bridge Straight", "R1", 4.2, "PLACE", 2, -1500.0, -16230, "none"], [111, "2026-01-14", "Paw Gertrude", "Ballarat", "R6", 3.2, "WIN", 1, 3300.0, -12930, "none"], [112, "2026-01-14", "Jimary Bob", "Capalaba", "R7", 2.7, "PLACE", 3, -1500.0, -14430, "none"], [113, "2026-01-14", "Mr Fresh", "Capalaba", "R10", 2.9, "WIN", 1, 2850.0, -11580, "none"], [114, "2026-01-14", "Curious Caza", "Capalaba", "R11", 3.4, "4th", 4, -1500.0, -13080, "none"], [115, "2026-01-14", "Goldstar Hector", "Ladbrokes Q1 Lakeside", "R3", null, "4th", 4, -1500.0, -14580, "none"], [116, "2026-01-14", "Mr. O'malley", "Ladbrokes Q1 Lakeside", "R6", null, "WIN", 1, -1500.0, -16080, "none"], [117, "2026-01-14", "Athlete Tick", "Richmond", "R7", 2.4, "5th", 5, -1500.0, -17580, "M2r"], [118, "2026-01-14", "Tightrope Henry", "Rockhampton", "R1", 12.0, "5th", 5, -1500.0, -19080, "none"], [119, "2026-01-14", "Hamish Rose", "Sale", "R12", 3.6, "4th", 4, -1500.0, -20580, "none"], [120, "2026-01-15", "Lochinvar Pearl", "Mount Gambier", "R4", 2.3, "WIN", 1, 1950.0, -18630, "none"], [121, "2026-01-15", "Crowie Unleashed", "Mount Gambier", "R6", 1.5, "WIN", 1, 750.0, -17880, "M2r"], [122, "2026-01-15", "Aston Jimena", "Mount Gambier", "R7", 2.6, "PLACE", 2, -1500.0, -19380, "none"], [123, "2026-01-15", "Autumn Rains", "Shepparton", "R1", 3.6, "WIN", 1, 3900.0, -15480, "none"], [124, "2026-01-15", "Motorsport", "Shepparton", "R4", 1.22, "WIN", 1, 330.0, -15150, "M2r"], [125, "2026-01-15", "Ayden's Warrior", "Wentworth Park", "R5", 1.35, "WIN", 1, 525.0, -14625, "M2r"], [126, "2026-01-16", "Fire Up Shazam", "Ladbrokes Q1 Lakeside", "R1", null, "WIN", 1, -1500.0, -16125, "none"], [127, "2026-01-16", "Beast Cut Loose", "Murray Bridge", "R1", 2.05, "PLACE", 2, -1500.0, -17625, "none"], [128, "2026-01-16", "Goldie Rusty", "Murray Bridge", "R9", 3.0, "PLACE", 2, -1500.0, -19125, "none"], [129, "2026-01-16", "Total Faith", "Wagga", "R3", 1.85, "WIN", 1, 1275.0, -17850, "none"], [130, "2026-01-17", "Talcott Bale", "Meadows", "R7", null, "6th", 6, -1500.0, -19350, "none"], [131, "2026-01-18", "Three Girls", "Capalaba", "R2", 51.0, "4th", 4, -1500.0, -20850, "none"], [132, "2026-01-18", "Tiger Beach", "Capalaba", "R2", 1.95, "WIN", 1, 1425.0, -19425, "none"], [133, "2026-01-18", "Brookers Road", "Capalaba", "R5", 1.75, "WIN", 1, 1125.0, -18300, "none"], [134, "2026-01-18", "Quick Shadow", "Darwin", "R7", 3.2, "PLACE", 2, -1500.0, -19800, "none"], [135, "2026-01-18", "Evil Eye", "Healesville", "R5", 1.25, "WIN", 1, 375.0, -19425, "none"], [136, "2026-01-18", "Zipping Strop", "Richmond", "R10", 1.5, "6th", 6, -1500.0, -20925, "none"], [137, "2026-01-18", "My Name's Eden", "Sale", "R6", 2.0, "3th", 3, -1500.0, -22425, "none"], [138, "2026-01-19", "Rupee Mcgraw", "Angle Park", "R4", null, "PLACE", 2, -1500.0, -23925, "none"], [139, "2026-01-19", "Tokyo Romance", "Warrnambool", "R1", null, "PLACE", 2, -1500.0, -25425, "none"], [140, "2026-01-20", "Leo Can Browse", "Mandurah", "R2", 3.7, "WIN", 1, 4050.0, -21375, "none"], [141, "2026-01-20", "Easy Aces", "Murray Bridge Straight", "R1", 1.45, "WIN", 1, 675.0, -20700, "none"], [142, "2026-01-20", "Bella Bambina", "Murray Bridge Straight", "R2", 1.5, "WIN", 1, 750.0, -19950, "none"], [143, "2026-01-20", "Outshine", "Murray Bridge Straight", "R4", 1.85, "WIN", 1, 1275.0, -18675, "none"], [144, "2026-01-20", "Pigeon's Desire", "Temora", "R9", 2.7, "4th", 4, -1500.0, -20175, "M2r"], [145, "2026-01-21", "He's Regal", "Capalaba", "R4", 1.55, "PLACE", 3, -1500.0, -21675, "none"], [146, "2026-01-21", "My Mate Nick", "Capalaba", "R9", 1.65, "6th", 6, -1500.0, -23175, "none"], [147, "2026-01-21", "Flyaway Jack", "Capalaba", "R11", 1.65, "PLACE", 2, -1500.0, -24675, "none"], [148, "2026-01-21", "Occulent", "Taree", "R9", 2.25, "5th", 5, -1500.0, -26175, "none"], [149, "2026-01-22", "Mallee Beauty", "Angle Park", "R7", 1.5, "PLACE", 2, -1500.0, -27675, "M2r"], [150, "2026-01-22", "Charlie Dutton", "Casino", "R12", 2.8, "4th", 4, -1500.0, -29175, "none"], [151, "2026-01-22", "We Got Lucky", "Healesville", "R2", 2.3, "4th", 4, -1500.0, -30675, "none"], [152, "2026-01-22", "Blame Spencer", "Healesville", "R5", 6.0, "3th", 3, -1500.0, -32175, "none"], [153, "2026-01-22", "Be A Shadow", "Healesville", "R9", 3.2, "4th", 4, -1500.0, -33675, "none"], [154, "2026-01-22", "Tim Zoo", "Sandown", "R9", null, "WIN", 1, -1500.0, -35175, "none"], [155, "2026-01-23", "I'm It", "Murray Bridge", "R3", 1.7, "PLACE", 3, -1500.0, -36675, "none"], [156, "2026-01-23", "Beast Cut Loose", "Murray Bridge", "R3", 4.8, "WIN", 1, 5700.0, -30975, "none"], [157, "2026-01-23", "Pumpkin Eater", "Richmond", "R3", 21.0, "6th", 6, -1500.0, -32475, "none"], [158, "2026-01-24", "Maserati Avenue", "The Gardens", "R6", 1.9, "6th", 6, -1500.0, -33975, "none"], [159, "2026-01-25", "Kachina Ripple", "Capalaba", "R9", 1.6, "WIN", 1, 900.0, -33075, "none"], [160, "2026-01-25", "Bugatti Candy", "Grafton", "R1", 2.3, "4th", 4, -1500.0, -34575, "none"], [161, "2026-01-25", "Myall Jack", "Healesville", "R3", 2.0, "PLACE", 2, -1500.0, -36075, "none"], [162, "2026-01-25", "Summer Kobie", "Healesville", "R12", 4.0, "PLACE", 2, -1500.0, -37575, "none"], [163, "2026-01-26", "Furious", "Maitland", "R8", 3.6, "PLACE", 2, -1500.0, -39075, "none"], [164, "2026-01-27", "Innovation", "Bulli", "R11", 3.8, "PLACE", 2, -1500.0, -40575, "none"], [165, "2026-01-27", "Sienna Lilly", "Casino", "R1", 7.5, "6th", 6, -1500.0, -42075, "none"], [166, "2026-01-27", "Professor Starr", "Ladbrokes Q1 Lakeside", "R9", null, "PLACE", 2, -1500.0, -43575, "none"], [167, "2026-01-28", "Hunterview Lad", "Ballarat", "R11", 4.4, "5th", 5, -1500.0, -45075, "none"], [168, "2026-01-28", "Shima Stripe", "Ballarat", "R13", 7.0, "PLACE", 3, -1500.0, -46575, "M1+M2r"], [169, "2026-01-28", "Bundy Blaze", "Capalaba", "R2", 5.5, "PLACE", 2, -1500.0, -48075, "none"], [170, "2026-01-28", "Have Ignition", "Capalaba", "R3", 1.15, "WIN", 1, 225.0, -47850, "none"], [171, "2026-01-28", "Ashley Hook", "Sale", "R3", 2.3, "7th", 7, -1500.0, -49350, "none"], [172, "2026-01-28", "Stitch And Shout", "Sale", "R7", 2.5, "3th", 3, -1500.0, -50850, "none"], [173, "2026-01-28", "Shaun Lee Rose", "Sale", "R9", 1.65, "WIN", 1, 975.0, -49875, "none"], [174, "2026-01-28", "Bentley Elsa", "Taree", "R11", 1.6, "WIN", 1, 900.0, -48975, "M2r"], [175, "2026-01-29", "Sunset Vendetta", "Mandurah", "R5", 2.1, "5th", 5, -1500.0, -50475, "M2r"], [176, "2026-01-30", "Slick Ability", "Bendigo", "R2", 4.4, "WIN", 1, 5100.0, -45375, "none"], [177, "2026-01-30", "Come On Larry", "Geelong", "R10", 2.5, "4th", 4, -1500.0, -46875, "none"], [178, "2026-01-30", "Be A Secret", "Healesville", "R7", 3.0, "PLACE", 3, -1500.0, -48375, "none"], [179, "2026-01-30", "Surf The Sun", "Mandurah", "R6", 2.15, "WIN", 1, 1725.0, -46650, "M2r"], [180, "2026-01-30", "Boston Banner", "Richmond", "R2", 2.1, "4th", 4, -1500.0, -48150, "none"], [181, "2026-01-30", "Done Dealing", "The Gardens", "R11", 1.26, "4th", 4, -1500.0, -49650, "none"], [182, "2026-01-31", "Pull The Trigger", "The Gardens", "R5", 1.95, "4th", 4, -1500.0, -51150, "none"], [183, "2026-02-01", "Sunlit Amber", "Capalaba", "R1", 13.0, "5th", 5, -1500.0, -52650, "none"], [184, "2026-02-01", "Mister Easy", "Darwin", "R4", 2.5, "PLACE", 2, -1500.0, -54150, "none"], [185, "2026-02-01", "Lady Jacqueline", "Grafton", "R10", 1.75, "PLACE", 2, -1500.0, -55650, "none"], [186, "2026-02-01", "Sonic Diesel", "Healesville", "R5", 3.5, "PLACE", 3, -1500.0, -57150, "none"], [187, "2026-02-02", "Tinker Conall", "Ballarat", "R4", 7.5, "WIN", 1, 9750.0, -47400, "M1+M2r"], [188, "2026-02-02", "Tinker Dot", "Ballarat", "R13", 3.3, "WIN", 1, 3450.0, -43950, "M2r"], [189, "2026-02-02", "Aston Joe", "Dubbo", "R7", 5.0, "WIN", 1, 6000.0, -37950, "M1+M2r"], [190, "2026-02-02", "Dodgy Denvah", "Mandurah", "R1", 2.7, "WIN", 1, 2550.0, -35400, "none"], [191, "2026-02-02", "Devington", "Shepparton", "R3", 1.5, "WIN", 1, 750.0, -34650, "none"], [192, "2026-02-03", "Blue Skylark", "Healesville", "R9", 5.0, "WIN", 1, 6000.0, -28650, "none"], [193, "2026-02-03", "Kiwi Ice Cube", "Hobart", "R4", 3.2, "WIN", 1, 3300.0, -25350, "none"], [194, "2026-02-03", "Cabarita Beach", "Ladbrokes Q1 Lakeside", "R3", null, "6th", 6, -1500.0, -26850, "none"], [195, "2026-02-04", "Where's Timmy", "Murray Bridge Straight", "R2", 1.7, "PLACE", 2, -1500.0, -28350, "none"], [196, "2026-02-04", "Pet Detective", "Murray Bridge Straight", "R9", 2.15, "PLACE", 2, -1500.0, -29850, "none"], [197, "2026-02-05", "Red Brook", "Angle Park", "R11", 10.0, "5th", 5, -1500.0, -31350, "M1"], [198, "2026-02-05", "Aston Jimena", "Mount Gambier", "R9", 2.3, "WIN", 1, 1950.0, -29400, "none"], [199, "2026-02-05", "Skedaddle Nikki", "Nowra", "R1", 5.5, "3th", 3, -1500.0, -30900, "none"], [200, "2026-02-05", "Romani Lass", "Nowra", "R2", 4.0, "5th", 5, -1500.0, -32400, "none"], [201, "2026-02-05", "War Hawk", "Nowra", "R4", 2.6, "4th", 4, -1500.0, -33900, "M2r"], [202, "2026-02-05", "Astronomica", "Shepparton", "R14", 14.0, "PLACE", 3, -1500.0, -35400, "M1"], [203, "2026-02-05", "Solicit", "Warrnambool", "R6", 2.2, "PLACE", 3, -1500.0, -36900, "none"], [204, "2026-02-06", "Shrewd Ethics", "Bulli", "R4", 2.25, "4th", 4, -1500.0, -38400, "none"], [205, "2026-02-06", "Come On Larry", "Geelong", "R3", 1.9, "WIN", 1, 1350.0, -37050, "none"], [206, "2026-02-06", "Weblec Blossom", "Murray Bridge", "R2", 14.0, "3th", 3, -1500.0, -38550, "none"], [207, "2026-02-06", "Moonlight Zipper", "The Gardens", "R4", 2.3, "PLACE", 2, -1500.0, -40050, "none"], [208, "2026-02-06", "Ordinary", "Townsville", "R2", 1.75, "PLACE", 2, -1500.0, -41550, "none"], [209, "2026-02-08", "Infamous", "Darwin", "R2", 4.6, "5th", 5, -1500.0, -43050, "none"], [210, "2026-02-08", "Just Is", "Gawler", "R1", 2.8, "PLACE", 2, -1500.0, -44550, "none"], [211, "2026-02-08", "Bo Cruz", "Gawler", "R2", 2.4, "PLACE", 2, -1500.0, -46050, "none"], [212, "2026-02-08", "Magic Western", "Healesville", "R4", 2.4, "7th", 7, -1500.0, -47550, "none"], [213, "2026-02-08", "Flaming Fox", "Healesville", "R7", 1.45, "WIN", 1, 675.0, -46875, "none"], [214, "2026-02-08", "Head Hunter", "Healesville", "R10", 4.6, "PLACE", 3, -1500.0, -48375, "none"], [215, "2026-02-08", "Knee Deep", "Healesville", "R12", 1.9, "PLACE", 2, -1500.0, -49875, "none"], [216, "2026-02-08", "Sky By Night", "Ladbrokes Q2 Parklands", "R3", null, "WIN", 1, -1500.0, -51375, "none"], [217, "2026-02-08", "Humpty Hugh", "Rockhampton", "R2", 7.5, "4th", 4, -1500.0, -52875, "none"], [218, "2026-02-08", "Valentia Blue", "Rockhampton", "R6", 1.35, "WIN", 1, 525.0, -52350, "none"], [219, "2026-02-08", "Matilda Rose", "Sale", "R10", 2.6, "PLACE", 2, -1500.0, -53850, "none"], [220, "2026-02-09", "Error Code", "Angle Park", "R1", 3.3, "WIN", 1, 3450.0, -50400, "none"], [221, "2026-02-09", "Tinker Mike", "Geelong", "R12", 5.5, "PLACE", 2, -1500.0, -51900, "M1+M2r"], [222, "2026-02-09", "Born Little", "Nowra", "R8", 2.5, "5th", 5, -1500.0, -53400, "none"], [223, "2026-02-09", "Okey", "Taree", "R5", 3.0, "4th", 4, -1500.0, -54900, "none"], [224, "2026-02-10", "Elegant Flint", "Angle Park", "R2", 2.6, "WIN", 1, 2400.0, -52500, "none"], [225, "2026-02-10", "Commanche Jack", "Ballarat", "R8", 1.45, "PLACE", 3, -1500.0, -54000, "M2r"], [226, "2026-02-10", "Where's Fernando", "Bulli", "R3", 1.35, "4th", 4, -1500.0, -55500, "none"], [227, "2026-02-10", "Bugatti Candy", "Grafton", "R1", 5.0, "PLACE", 3, -1500.0, -57000, "none"], [228, "2026-02-10", "Zipping Kravitz", "Ladbrokes Q1 Lakeside", "R7", null, "PLACE", 2, -1500.0, -58500, "none"], [229, "2026-02-10", "Waltzing Blaster", "Warragul", "R1", 15.0, "6th", 6, -1500.0, -60000, "none"], [230, "2026-02-11", "Valletta Dash", "Ballarat", "R14", 4.2, "PLACE", 2, -1500.0, -61500, "none"], [231, "2026-02-11", "Armarta", "Capalaba", "R7", 1.33, "WIN", 1, 495.0, -61005, "none"], [232, "2026-02-11", "Miss Righteous", "Capalaba", "R10", 1.75, "3th", 3, -1500.0, -62505, "none"], [233, "2026-02-11", "Head Hunter", "Healesville", "R8", 1.4, "WIN", 1, 600.0, -61905, "none"], [234, "2026-02-11", "Where's Timmy", "Murray Bridge Straight", "R1", 2.9, "PLACE", 2, -1500.0, -63405, "none"], [235, "2026-02-11", "Shiny Pistol", "Murray Bridge Straight", "R9", 3.1, "3th", 3, -1500.0, -64905, "none"], [236, "2026-02-11", "Dr. Smokey", "Sale", "R1", 3.9, "4th", 4, -1500.0, -66405, "none"], [237, "2026-02-11", "Chevy Express", "Taree", "R8", 1.65, "WIN", 1, 975.0, -65430, "M2r"], [238, "2026-02-13", "Another Jimmy", "Mandurah", "R6", 4.6, "6th", 6, -1500.0, -66930, "none"], [239, "2026-02-13", "What's The Story", "The Gardens", "R5", 4.6, "3th", 3, -1500.0, -68430, "none"], [240, "2026-02-14", "Gemma Keeping", "Dubbo", "R1", 1.45, "WIN", 1, 675.0, -67755, "none"], [241, "2026-02-14", "Myola Nick", "Geelong", "R11", 11.0, "5th", 5, -1500.0, -69255, "none"], [242, "2026-02-14", "Daysea's Chief", "Ladbrokes Q1 Lakeside", "R3", null, "4th", 4, -1500.0, -70755, "none"], [243, "2026-02-14", "Zipping Kravitz", "Ladbrokes Q1 Lakeside", "R9", null, "WIN", 1, -1500.0, -72255, "none"], [244, "2026-02-14", "Ned", "Mandurah", "R12", 4.4, "PLACE", 2, -1500.0, -73755, "none"], [245, "2026-02-14", "Tebogo", "The Gardens", "R1", 6.5, "5th", 5, -1500.0, -75255, "none"], [246, "2026-02-15", "Fins Up Wendy", "Capalaba", "R1", 9.0, "4th", 4, -1500.0, -76755, "none"], [247, "2026-02-15", "Rare Presence", "Capalaba", "R3", 6.0, "4th", 4, -1500.0, -78255, "none"], [248, "2026-02-15", "Luka Magic", "Darwin", "R3", 2.7, "3th", 3, -1500.0, -79755, "none"], [249, "2026-02-15", "Just Is", "Gawler", "R6", 2.9, "4th", 4, -1500.0, -81255, "none"], [250, "2026-02-15", "Bella Bambina", "Gawler", "R10", 1.45, "PLACE", 2, -1500.0, -82755, "none"], [251, "2026-02-15", "Fernley Girl", "Healesville", "R1", 3.6, "3th", 3, -1500.0, -84255, "none"], [252, "2026-02-15", "Santana Boy", "Healesville", "R7", 3.1, "WIN", 1, 3150.0, -81105, "none"], [253, "2026-02-15", "Waltzing Diablo", "Healesville", "R11", 3.4, "4th", 4, -1500.0, -82605, "none"], [254, "2026-02-15", "Ripper Art", "Rockhampton", "R7", 4.6, "WIN", 1, 5400.0, -77205, "none"], [255, "2026-02-15", "Park Key Pop", "Taree", "R6", 2.4, "PLACE", 2, -1500.0, -78705, "none"], [256, "2026-02-16", "Where's Fernando", "Nowra", "R8", 1.5, "WIN", 1, 750.0, -77955, "M2r"], [257, "2026-02-16", "Nicko Jack", "Nowra", "R10", 1.9, "WIN", 1, 1350.0, -76605, "M2r"], [258, "2026-02-16", "Aston Jalapeno", "Shepparton", "R14", 2.9, "WIN", 1, 2850.0, -73755, "none"], [259, "2026-02-17", "Dale's Corner", "Geelong", "R11", 5.0, "PLACE", 3, -1500.0, -75255, "M1"], [260, "2026-02-17", "Magic Western", "Healesville", "R8", 2.9, "PLACE", 2, -1500.0, -76755, "none"], [261, "2026-02-17", "Armarta", "Ladbrokes Q1 Lakeside", "R11", null, "7th", 7, -1500.0, -78255, "none"], [262, "2026-02-18", "Paw Danger", "Ballarat", "R2", 5.5, "PLACE", 2, -1500.0, -79755, "none"], [263, "2026-02-18", "Detective", "Capalaba", "R2", 2.4, "PLACE", 3, -1500.0, -81255, "none"], [264, "2026-02-18", "Tiger Beach", "Capalaba", "R3", 5.0, "PLACE", 2, -1500.0, -82755, "none"], [265, "2026-02-18", "Yarramundi Opal", "Murray Bridge Straight", "R9", 2.15, "WIN", 1, 1725.0, -81030, "M2r"], [266, "2026-02-18", "Turbo Todd", "Richmond", "R3", 13.0, "PLACE", 2, -1500.0, -82530, "none"], [267, "2026-02-18", "Speakeasy", "Rockhampton", "R1", 3.9, "3th", 3, -1500.0, -84030, "none"], [268, "2026-02-18", "Dr. Smokey", "Sale", "R1", 3.1, "WIN", 1, 3150.0, -80880, "none"], [269, "2026-02-18", "Malicious", "Taree", "R8", 1.65, "WIN", 1, 975.0, -79905, "none"], [270, "2026-02-19", "Mondo Cortez", "Ladbrokes Q2 Parklands", "R2", null, "PLACE", 2, -1500.0, -81405, "none"], [271, "2026-02-19", "Nangar Polly", "Wentworth Park", "R2", 2.25, "PLACE", 3, -1500.0, -82905, "none"], [272, "2026-02-20", "Ferocious Vaughn", "Goulburn", "R1", 2.2, "3th", 3, -1500.0, -84405, "none"], [273, "2026-02-20", "Sailplane", "Healesville", "R6", 2.6, "3th", 3, -1500.0, -85905, "none"], [274, "2026-02-20", "Neame", "Ladbrokes Q1 Lakeside", "R8", null, "WIN", 1, -1500.0, -87405, "none"], [275, "2026-02-20", "Nangar Onyx", "Mandurah", "R3", 4.6, "5th", 5, -1500.0, -88905, "none"], [276, "2026-02-20", "Just A Piastri", "Mandurah", "R3", 1.65, "WIN", 1, 975.0, -87930, "none"], [277, "2026-02-21", "Extreme Machine", "Wentworth Park", "R1", 1.7, "WIN", 1, 1050.0, -86880, "none"], [278, "2026-02-22", "Bart's Chance", "Darwin", "R4", 9.0, "PLACE", 2, -1500.0, -88380, "none"], [279, "2026-02-22", "Luka Magic", "Darwin", "R5", 2.6, "5th", 5, -1500.0, -89880, "none"], [280, "2026-02-22", "He's Something", "Ladbrokes Q2 Parklands", "R10", null, "WIN", 1, -1500.0, -91380, "none"], [281, "2026-02-22", "Diva's Rose", "Mount Gambier", "R2", 4.6, "5th", 5, -1500.0, -92880, "none"], [282, "2026-02-22", "Zipping Zeppelin", "Richmond", "R2", 3.4, "3th", 3, -1500.0, -94380, "none"], [283, "2026-02-23", "She's Got Design", "Angle Park", "R1", 6.0, "4th", 4, -1500.0, -95880, "none"], [284, "2026-02-23", "King Cherry", "Healesville", "R6", 2.1, "PLACE", 2, -1500.0, -97380, "none"], [285, "2026-02-23", "Speedy Van Wezel", "Nowra", "R9", 2.0, "WIN", 1, 1500.0, -95880, "none"], [286, "2026-02-23", "Distinction", "Shepparton", "R5", 1.24, "WIN", 1, 360.0, -95520, "M2r"], [287, "2026-02-24", "Aussie Blizzard", "Bulli", "R1", 6.0, "5th", 5, -1500.0, -97020, "none"], [288, "2026-02-24", "Tarawi Brumby", "Gosford", "R3", 1.75, "3th", 3, -1500.0, -98520, "none"], [289, "2026-02-24", "Hara's Loki", "Ladbrokes Q1 Lakeside", "R2", null, "3th", 3, -1500.0, -100020, "none"], [290, "2026-02-24", "On Holidays", "Townsville", "R4", 1.8, "5th", 5, -1500.0, -101520, "M2r"], [291, "2026-02-25", "Laserhawk", "Ballarat", "R2", 1.9, "6th", 6, -1500.0, -103020, "none"], [292, "2026-02-25", "Striking Beach", "Capalaba", "R3", 7.5, "PLACE", 2, -1500.0, -104520, "none"], [293, "2026-02-25", "Crickle Owl Vic", "Capalaba", "R7", 4.0, "PLACE", 2, -1500.0, -106020, "none"], [294, "2026-02-25", "Bull's Chance", "Darwin", "R5", 2.15, "6th", 6, -1500.0, -107520, "M2r"], [295, "2026-02-25", "Osprey Chronos", "Murray Bridge Straight", "R1", 1.3, "WIN", 1, 450.0, -107070, "none"], [296, "2026-02-25", "Quick Shot", "Rockhampton", "R6", 1.3, "WIN", 1, 450.0, -106620, "M2r"], [297, "2026-02-25", "Tilly Girl", "Sale", "R5", 2.0, "WIN", 1, 1500.0, -105120, "M2r"], [298, "2026-02-26", "Nitrous", "Angle Park", "R11", 2.7, "WIN", 1, 2550.0, -102570, "M2r"], [299, "2026-02-26", "Aston Gosset", "Mount Gambier", "R3", 2.4, "5th", 5, -1500.0, -104070, "none"], [300, "2026-02-26", "Why Not Jules", "Warragul", "R5", 9.0, "PLACE", 2, -1500.0, -105570, "M1+M2r"], [301, "2026-02-27", "Hibiki Blue", "Goulburn", "R10", 5.5, "PLACE", 2, -1500.0, -107070, "M1+M2r"], [302, "2026-02-27", "Gold Loki", "Murray Bridge", "R10", 2.8, "WIN", 1, 2700.0, -104370, "none"], [303, "2026-02-27", "Whisky Bent", "The Gardens", "R7", 1.75, "WIN", 1, 1125.0, -103245, "none"], [304, "2026-02-28", "Bonnie Is Boujee", "Ladbrokes Q1 Lakeside", "R5", null, "PLACE", 3, -1500.0, -104745, "none"], [305, "2026-02-28", "Paw Bellonda", "Taree", "R1", 1.75, "PLACE", 2, -1500.0, -106245, "none"], [306, "2026-02-28", "Bella Belle", "Taree", "R2", 8.5, "5th", 5, -1500.0, -107745, "none"], [307, "2026-03-01", "Detective", "Capalaba", "R2", 3.0, "PLACE", 2, -1500.0, -109245, "none"], [308, "2026-03-01", "Silversmith", "Darwin", "R1", 3.0, "WIN", 1, 3000.0, -106245, "none"], [309, "2026-03-01", "Flaming Fox", "Healesville", "R4", 4.4, "3th", 3, -1500.0, -107745, "none"], [310, "2026-03-01", "Got Flair", "Healesville", "R8", 5.5, "PLACE", 2, -1500.0, -109245, "none"], [311, "2026-03-01", "Opal Limes", "Mount Gambier", "R2", 21.0, "4th", 4, -1500.0, -110745, "none"], [312, "2026-03-01", "Wind Whiskers", "Mount Gambier", "R7", 1.45, "WIN", 1, 675.0, -110070, "none"], [313, "2026-03-01", "Wario", "Mount Gambier", "R8", 1.28, "WIN", 1, 420.0, -109650, "none"], [314, "2026-03-01", "Bomb Luca", "Mount Gambier", "R9", 1.65, "PLACE", 2, -1500.0, -111150, "none"], [315, "2026-03-01", "Teddy Devil", "Richmond", "R2", 4.2, "WIN", 1, 4800.0, -106350, "none"], [316, "2026-03-02", "Hunterview Lad", "Ballarat", "R10", 3.2, "4th", 4, -1500.0, -107850, "none"], [317, "2026-03-02", "Bullseye Bob", "Healesville", "R8", 2.5, "PLACE", 2, -1500.0, -109350, "none"], [318, "2026-03-02", "Karoline Banner", "Maitland", "R2", 2.2, "4th", 4, -1500.0, -110850, "none"], [319, "2026-03-02", "Badger's Beast", "Maitland", "R4", 2.25, "3th", 3, -1500.0, -112350, "none"], [320, "2026-03-02", "Tarawi Mike", "Maitland", "R11", 1.95, "PLACE", 2, -1500.0, -113850, "none"], [321, "2026-03-02", "Lock Star", "Nowra", "R1", 15.0, "5th", 5, -1500.0, -115350, "none"], [322, "2026-03-02", "Where's Fernando", "Nowra", "R4", 1.2, "WIN", 1, 300.0, -115050, "M2r"], [323, "2026-03-03", "Blame Wally", "Bendigo", "R1", 2.8, "4th", 4, -1500.0, -116550, "none"], [324, "2026-03-03", "Angry Chief", "Horsham", "R6", 4.0, "3th", 3, -1500.0, -118050, "none"], [325, "2026-03-03", "Paw Kramer", "Horsham", "R9", 2.1, "PLACE", 2, -1500.0, -119550, "none"], [326, "2026-03-03", "Sketchy Toby", "Murray Bridge Straight", "R5", 6.0, "4th", 4, -1500.0, -121050, "M1"], [327, "2026-03-03", "Mr. Yellowstone", "Murray Bridge Straight", "R7", 4.8, "6th", 6, -1500.0, -122550, "M2r"], [328, "2026-03-04", "Lakoda Jill", "Ladbrokes Q1 Lakeside", "R3", null, "PLACE", 3, -1500.0, -124050, "none"], [329, "2026-03-04", "Dark End", "Rockhampton", "R1", 4.2, "3th", 3, -1500.0, -125550, "none"], [330, "2026-03-04", "Dr. Tanya", "Sale", "R1", 4.8, "PLACE", 3, -1500.0, -127050, "none"], [331, "2026-03-04", "Steele Jakit", "Sale", "R12", 2.6, "WIN", 1, 2400.0, -124650, "M2r"], [332, "2026-03-04", "She's A Angel", "Taree", "R1", 4.0, "PLACE", 2, -1500.0, -126150, "none"], [333, "2026-03-05", "Luna Anne", "Casino", "R9", 2.8, "PLACE", 2, -1500.0, -127650, "M2r"], [334, "2026-03-05", "Martinique", "Casino", "R10", 1.65, "PLACE", 2, -1500.0, -129150, "none"], [335, "2026-03-05", "Bronze", "Geelong", "R8", 3.8, "PLACE", 2, -1500.0, -130650, "M2r"], [336, "2026-03-05", "Extreme Tension", "Ladbrokes Q2 Parklands", "R9", null, "WIN", 1, -1500.0, -132150, "none"], [337, "2026-03-06", "He's Something", "Ladbrokes Q1 Lakeside", "R11", null, "WIN", 1, -1500.0, -133650, "none"], [338, "2026-03-06", "Sunset Clarice", "Mandurah", "R5", 1.75, "WIN", 1, 1125.0, -132525, "M2r"], [339, "2026-03-06", "Sunset Oyster", "Mandurah", "R7", 1.75, "5th", 5, -1500.0, -134025, "none"], [340, "2026-03-06", "Scotch Lass", "Taree", "R1", 2.9, "4th", 4, -1500.0, -135525, "none"], [341, "2026-03-06", "Whisky Bent", "The Gardens", "R5", 1.35, "PLACE", 2, -1500.0, -137025, "none"], [342, "2026-03-07", "Giacomo", "Cannington", "R1", 2.5, "WIN", 1, 2250.0, -134775, "none"], [343, "2026-03-07", "Zipping Lipa", "Ladbrokes Q1 Lakeside", "R9", null, "PLACE", 2, -1500.0, -136275, "none"], [344, "2026-03-08", "Cheers Mick", "Darwin", "R1", 6.0, "3th", 3, -1500.0, -137775, "none"], [345, "2026-03-08", "So Naive", "Darwin", "R2", 2.15, "PLACE", 2, -1500.0, -139275, "none"], [346, "2026-03-08", "Stan's Dream", "Darwin", "R6", 1.55, "WIN", 1, 825.0, -138450, "none"], [347, "2026-03-08", "Luka Magic", "Darwin", "R7", 2.8, "4th", 4, -1500.0, -139950, "none"], [348, "2026-03-08", "Mums Pearl", "Healesville", "R5", 4.4, "5th", 5, -1500.0, -141450, "none"], [349, "2026-03-08", "Tarawi Therese", "Healesville", "R6", 1.35, "WIN", 1, 525.0, -140925, "none"], [350, "2026-03-08", "Wario", "Mount Gambier", "R4", 1.4, "PLACE", 2, -1500.0, -142425, "none"], [351, "2026-03-08", "Blue Khaki", "Mount Gambier", "R4", 6.0, "4th", 4, -1500.0, -143925, "none"], [352, "2026-03-08", "Unique Destiny", "Mount Gambier", "R6", 2.0, "5th", 5, -1500.0, -145425, "none"], [353, "2026-03-08", "My Name's Eden", "Sale", "R6", 2.8, "6th", 6, -1500.0, -146925, "none"], [354, "2026-03-08", "Scarlet's Desire", "Temora", "R2", 1.85, "3th", 3, -1500.0, -148425, "none"], [355, "2026-03-08", "Zipping Kimmich", "Temora", "R9", 12.0, "6th", 6, -1500.0, -149925, "none"], [356, "2026-03-09", "Jason Rose", "Gawler", "R3", 3.4, "WIN", 1, 3600.0, -146325, "none"], [357, "2026-03-10", "Blame Wally", "Ballarat", "R1", 3.6, "3th", 3, -1500.0, -147825, "none"], [358, "2026-03-10", "Tricky Disco", "Ballarat", "R10", 3.3, "WIN", 1, 3450.0, -144375, "none"], [359, "2026-03-10", "Nikita Bale", "Ballarat", "R13", 4.8, "5th", 5, -1500.0, -145875, "none"], [360, "2026-03-10", "Ruby's Show", "Ballarat", "R14", 4.0, "3th", 3, -1500.0, -147375, "M2r"], [361, "2026-03-10", "Joker Bonus", "Grafton", "R8", 2.0, "PLACE", 2, -1500.0, -148875, "none"], [362, "2026-03-10", "Moonlight River", "Horsham", "R7", 1.75, "3th", 3, -1500.0, -150375, "none"], [363, "2026-03-10", "Paw Waverly", "Horsham", "R8", 1.75, "PLACE", 2, -1500.0, -151875, "none"], [364, "2026-03-10", "Blue Art", "Ladbrokes Q1 Lakeside", "R9", null, "PLACE", 2, -1500.0, -153375, "none"], [365, "2026-03-10", "Mr. Yellowstone", "Murray Bridge Straight", "R6", 2.5, "5th", 5, -1500.0, -154875, "M2r"], [366, "2026-03-11", "Bear The Brunt", "Ballarat", "R12", 1.5, "PLACE", 2, -1500.0, -156375, "M2r"], [367, "2026-03-11", "Hara's Pumpkin", "Capalaba", "R4", 1.35, "WIN", 1, 525.0, -155850, "none"], [368, "2026-03-11", "Believe Again", "Meadows", "R2", 1.5, "PLACE", 2, -1500.0, -157350, "none"], [369, "2026-03-11", "Terrell Banner", "Richmond", "R11", 1.33, "WIN", 1, 495.0, -156855, "M2r"], [370, "2026-03-11", "Awe Peanut", "Sale", "R1", 2.3, "6th", 6, -1500.0, -158355, "none"], [371, "2026-03-27", "He's Regal", "Ladbrokes Q1 Lakeside", "R12", null, "WIN", 1, -1500.0, -159855, "none"], [372, "2026-03-27", "Queen Era", "Richmond", "R12", 1.32, "WIN", 1, 480.0, -159375, "M2r"], [373, "2026-03-28", "Max Capacity", "Cannington", "R9", 2.45, "6th", 6, -1500.0, -160875, "none"], [374, "2026-03-28", "Aussie Mirage", "Geelong", "R2", 4.0, "5th", 5, -1500.0, -162375, "none"], [375, "2026-03-28", "Lady Gunai", "Geelong", "R9", 2.2, "PLACE", 3, -1500.0, -163875, "none"], [376, "2026-03-28", "Santorini Beach", "Ladbrokes Q1 Lakeside", "R6", null, "3th", 3, -1500.0, -165375, "none"], [377, "2026-03-28", "Roads", "Taree", "R4", 3.2, "PLACE", 2, -1500.0, -166875, "none"], [378, "2026-03-29", "Armarta", "Capalaba", "R8", 1.9, "4th", 4, -1500.0, -168375, "none"], [379, "2026-03-29", "Daysea's Tim", "Capalaba", "R10", 2.4, "PLACE", 2, -1500.0, -169875, "none"], [380, "2026-03-29", "So Naive", "Darwin", "R5", 1.95, "PLACE", 2, -1500.0, -171375, "none"], [381, "2026-03-29", "Bart's Chance", "Darwin", "R6", 5.5, "PLACE", 2, -1500.0, -172875, "none"], [382, "2026-03-29", "Carry On Casey", "Gawler", "R9", 2.6, "WIN", 1, 2400.0, -170475, "none"], [383, "2026-03-29", "Close Talker", "Grafton", "R2", 101.0, "7th", 7, -1500.0, -171975, "none"], [384, "2026-03-29", "Mimosa Molly", "Ladbrokes Q2 Parklands", "R2", null, "5th", 5, -1500.0, -173475, "none"], [385, "2026-03-30", "Allinga Mercury", "Angle Park", "R3", 4.2, "3th", 3, -1500.0, -174975, "none"], [386, "2026-03-30", "Snoopy's Ethics", "Maitland", "R4", 6.0, "4th", 4, -1500.0, -176475, "none"], [387, "2026-03-30", "Hot Shot Ethics", "Maitland", "R5", 3.2, "WIN", 1, 3300.0, -173175, "none"], [388, "2026-03-30", "Reggae Ethics", "Maitland", "R9", 3.0, "PLACE", 2, -1500.0, -174675, "none"], [389, "2026-03-30", "Zatara Fire", "Mandurah", "R1", 9.0, "PLACE", 2, -1500.0, -176175, "none"], [390, "2026-03-30", "Gramercy Garry", "Nowra", "R8", 2.5, "4th", 4, -1500.0, -177675, "M2r"], [391, "2026-03-31", "Gambino", "Gosford", "R4", 2.9, "6th", 6, -1500.0, -179175, "M2r"], [392, "2026-03-31", "Solar Gold", "Horsham", "R1", 7.5, "5th", 5, -1500.0, -180675, "none"], [393, "2026-03-31", "Panther Potter", "Townsville", "R11", 1.22, "WIN", 1, 330.0, -180345, "none"], [394, "2026-04-01", "Nangar Onyx", "Cannington", "R7", 1.9, "WIN", 1, 1350.0, -178995, "none"], [395, "2026-04-01", "One Margarita", "Murray Bridge Straight", "R3", 7.5, "4th", 4, -1500.0, -180495, "none"], [396, "2026-04-01", "Outshine", "Murray Bridge Straight", "R5", 10.0, "4th", 4, -1500.0, -181995, "M1+M2r"], [397, "2026-04-01", "Flash Jet", "Richmond", "R5", 1.85, "4th", 4, -1500.0, -183495, "M2r"], [398, "2026-04-01", "Pigeon's Desire", "Temora", "R3", 4.4, "5th", 5, -1500.0, -184995, "none"], [399, "2026-04-01", "Secret Joker", "Temora", "R8", 1.4, "WIN", 1, 600.0, -184395, "M2r"], [400, "2026-04-02", "Apilla", "Angle Park", "R9", 1.09, "WIN", 1, 135.0, -184260, "none"], [401, "2026-04-02", "Hi Ellen", "Casino", "R2", 1.85, "PLACE", 2, -1500.0, -185760, "none"], [402, "2026-04-02", "Martinique", "Casino", "R12", 1.4, "WIN", 1, 600.0, -185160, "M2r"], [403, "2026-04-02", "If Ever", "Hobart", "R4", 1.07, "WIN", 1, 105.0, -185055, "M2r"], [404, "2026-04-02", "Hara's Frankie", "Ladbrokes Q2 Parklands", "R4", null, "WIN", 1, -1500.0, -186555, "none"], [405, "2026-04-02", "Weather Report", "Ladbrokes Q2 Parklands", "R11", null, "WIN", 1, -1500.0, -188055, "none"], [406, "2026-04-02", "Sunset Clarice", "Mandurah", "R9", 1.22, "WIN", 1, 330.0, -187725, "M2r"], [407, "2026-04-02", "Big Boy Jett", "Mount Gambier", "R9", 2.15, "WIN", 1, 1725.0, -186000, "none"], [408, "2026-04-02", "Shanny Rose", "Mount Gambier", "R10", 3.1, "PLACE", 2, -1500.0, -187500, "M2r"], [409, "2026-04-02", "Rough Girl Nosey", "Mount Gambier", "R11", 3.4, "PLACE", 2, -1500.0, -189000, "M2r"], [410, "2026-04-04", "Infra Terra", "Ladbrokes Q1 Lakeside", "R3", null, "4th", 4, -1500.0, -190500, "none"], [411, "2026-04-04", "Fireball Night", "The Gardens", "R5", 6.5, "WIN", 1, 8250.0, -182250, "none"], [412, "2026-04-04", "Zipping Hopkins", "Wentworth Park", "R3", 2.35, "PLACE", 2, -1500.0, -183750, "none"], [413, "2026-04-04", "Ritza Tears", "Wentworth Park", "R10", 1.7, "WIN", 1, 1050.0, -182700, "none"], [414, "2026-04-05", "Psionic Prowess", "Capalaba", "R4", 2.4, "PLACE", 2, -1500.0, -184200, "none"], [415, "2026-04-05", "Luka Magic", "Darwin", "R4", 1.6, "PLACE", 2, -1500.0, -185700, "none"], [416, "2026-04-05", "Fire Me Up", "Grafton", "R12", 8.5, "WIN", 1, 11250.0, -174450, "none"], [417, "2026-04-05", "Wario", "Mount Gambier", "R2", 1.3, "PLACE", 2, -1500.0, -175950, "none"], [418, "2026-04-06", "Son Of Maple", "Angle Park", "R9", 2.3, "WIN", 1, 1950.0, -174000, "M2r"], [419, "2026-04-06", "Duran Pantera", "Angle Park", "R12", 3.1, "3th", 3, -1500.0, -175500, "none"], [420, "2026-04-06", "Rise Up Nismo", "Maitland", "R8", 2.7, "WIN", 1, 2550.0, -172950, "none"], [421, "2026-04-06", "I'm Fabulous", "Sandown", "R6", null, "PLACE", 2, -1500.0, -174450, "none"], [422, "2026-04-07", "Budgeree", "Angle Park", "R6", 1.7, "WIN", 1, 1050.0, -173400, "M2r"], [423, "2026-04-07", "Cinnamon Swirl", "Grafton", "R1", 6.5, "4th", 4, -1500.0, -174900, "none"], [424, "2026-04-07", "Nikita Bale", "Horsham", "R13", 4.0, "6th", 6, -1500.0, -176400, "none"], [425, "2026-04-07", "Canya Romance", "Ladbrokes Q1 Lakeside", "R11", null, "WIN", 1, -1500.0, -177900, "none"], [426, "2026-04-07", "Smallest Fan", "Mandurah", "R4", 11.0, "3th", 3, -1500.0, -179400, "M1"], [427, "2026-04-08", "Mr Fresh", "Capalaba", "R3", 2.7, "4th", 4, -1500.0, -180900, "none"], [428, "2026-04-08", "Cashed Up Beth", "Capalaba", "R5", 2.7, "4th", 4, -1500.0, -182400, "none"], [429, "2026-04-08", "Clive's Chance", "Darwin", "R3", 5.5, "WIN", 1, 6750.0, -175650, "none"], [430, "2026-04-08", "Luka Magic", "Darwin", "R5", 1.8, "5th", 5, -1500.0, -177150, "M2r"], [431, "2026-04-08", "Hayden's Gift", "Ladbrokes Q1 Lakeside", "R14", null, "WIN", 1, -1500.0, -178650, "none"], [432, "2026-04-08", "Low Block", "Murray Bridge Straight", "R2", 1.75, "3th", 3, -1500.0, -180150, "none"], [433, "2026-04-08", "Outshine", "Murray Bridge Straight", "R10", 8.5, "5th", 5, -1500.0, -181650, "M1+M2r"], [434, "2026-04-08", "Canya Supersonic", "Richmond", "R7", 1.65, "PLACE", 2, -1500.0, -183150, "M2r"], [435, "2026-04-08", "Woolgoolga", "Richmond", "R8", 3.3, "WIN", 1, 3450.0, -179700, "M2r"], [436, "2026-04-08", "Hara's Pest", "Rockhampton", "R2", 1.6, "3th", 3, -1500.0, -181200, "none"], [437, "2026-04-08", "Son Of Bianca", "Temora", "R9", 1.55, "5th", 5, -1500.0, -182700, "M2r"], [438, "2026-04-09", "Fantastic Spike", "Angle Park", "R7", 5.0, "PLACE", 2, -1500.0, -184200, "M1"], [439, "2026-04-09", "Scarred", "Hobart", "R1", 1.35, "WIN", 1, 525.0, -183675, "none"], [440, "2026-04-09", "Serious Swagger", "Hobart", "R3", 2.15, "WIN", 1, 1725.0, -181950, "none"], [441, "2026-04-09", "Jungle Boogie", "Hobart", "R9", 2.0, "WIN", 1, 1500.0, -180450, "none"], [442, "2026-04-09", "Neame", "Ladbrokes Q2 Parklands", "R4", null, "PLACE", 2, -1500.0, -181950, "none"], [443, "2026-04-09", "King Of Gods", "Ladbrokes Q2 Parklands", "R9", null, "3th", 3, -1500.0, -183450, "none"], [444, "2026-04-09", "Dell Mister", "Mount Gambier", "R5", 1.65, "WIN", 1, 975.0, -182475, "none"], [445, "2026-04-09", "Compton Shelly", "Mount Gambier", "R7", 1.28, "WIN", 1, 420.0, -182055, "M2r"], [446, "2026-04-09", "Gramercy Garry", "Nowra", "R5", 1.5, "WIN", 1, 750.0, -181305, "M2r"], [447, "2026-04-10", "Dark Noise", "Goulburn", "R3", 4.4, "PLACE", 2, -1500.0, -182805, "none"], [448, "2026-04-10", "Aussie Savannah", "Healesville", "R7", 3.2, "7th", 7, -1500.0, -184305, "none"], [449, "2026-04-10", "Happy Chick", "Healesville", "R9", 1.7, "WIN", 1, 1050.0, -183255, "none"], [450, "2026-04-10", "Thai Butterfly", "Healesville", "R10", 4.4, "5th", 5, -1500.0, -184755, "none"], [451, "2026-04-10", "Oxidisation", "Ladbrokes Q1 Lakeside", "R5", null, "WIN", 1, -1500.0, -186255, "none"], [452, "2026-04-10", "Dodgy Danny", "Mandurah", "R6", 4.2, "PLACE", 2, -1500.0, -187755, "none"], [453, "2026-04-10", "Danyo's Henry", "Murray Bridge", "R4", 7.5, "3th", 3, -1500.0, -189255, "none"], [454, "2026-04-10", "Dimora Bluey", "Murray Bridge", "R10", 2.4, "WIN", 1, 2100.0, -187155, "M2r"], [455, "2026-04-10", "Sneaky Jade", "Richmond", "R9", 2.7, "PLACE", 2, -1500.0, -188655, "M2r"], [456, "2026-04-10", "Time Passages", "Townsville", "R7", 2.3, "5th", 5, -1500.0, -190155, "none"], [457, "2026-04-10", "Tiggerlong Bingo", "Wagga", "R4", 1.2, "WIN", 1, 300.0, -189855, "M2r"], [458, "2026-04-10", "Kostecki", "Wagga", "R9", 7.0, "6th", 6, -1500.0, -191355, "M1+M2r"], [459, "2026-04-11", "Hurry Up Eric", "Cannington", "R8", 2.3, "WIN", 1, 1950.0, -189405, "none"], [460, "2026-04-11", "Fire Me Up", "Ladbrokes Q1 Lakeside", "R3", null, "WIN", 1, -1500.0, -190905, "none"], [461, "2026-04-11", "Bonnie Is Boujee", "Ladbrokes Q1 Lakeside", "R10", null, "5th", 5, -1500.0, -192405, "none"], [462, "2026-04-11", "Modest Man", "The Gardens", "R5", 2.0, "WIN", 1, 1500.0, -190905, "none"], [463, "2026-04-12", "Hello Gemini", "Capalaba", "R1", 2.25, "WIN", 1, 1875.0, -189030, "none"], [464, "2026-04-12", "Have Ignition", "Capalaba", "R9", 9.0, "PLACE", 2, -1500.0, -190530, "none"], [465, "2026-04-12", "Birmingham", "Darwin", "R5", 4.0, "PLACE", 3, -1500.0, -192030, "none"], [466, "2026-04-12", "Bugatti Candy", "Grafton", "R1", 8.0, "5th", 5, -1500.0, -193530, "none"], [467, "2026-04-12", "Kingsbrae Emma", "Grafton", "R9", 1.6, "WIN", 1, 900.0, -192630, "none"], [468, "2026-04-12", "Joker Bonus", "Grafton", "R10", 3.6, "PLACE", 2, -1500.0, -194130, "none"], [469, "2026-04-12", "Sonic Diesel", "Healesville", "R7", 3.5, "PLACE", 2, -1500.0, -195630, "none"], [470, "2026-04-12", "Miss Peachy", "Mount Gambier", "R2", 5.0, "3th", 3, -1500.0, -197130, "none"], [471, "2026-04-12", "Costly Habits", "Mount Gambier", "R2", 3.7, "PLACE", 2, -1500.0, -198630, "none"], [472, "2026-04-12", "Major Queen", "Mount Gambier", "R9", 1.33, "WIN", 1, 495.0, -198135, "none"], [473, "2026-04-12", "Charlyn", "Rockhampton", "R2", 15.0, "4th", 4, -1500.0, -199635, "none"], [474, "2026-04-13", "Our Bella Rose", "Angle Park", "R3", 8.0, "PLACE", 2, -1500.0, -201135, "none"], [475, "2026-04-13", "Remi Joy", "Ballarat", "R7", 5.0, "5th", 5, -1500.0, -202635, "M1+M2r"], [476, "2026-04-13", "Semi Peakin'", "Maitland", "R3", 4.4, "PLACE", 2, -1500.0, -204135, "none"], [477, "2026-04-13", "Badger's Beast", "Maitland", "R5", 1.28, "WIN", 1, 420.0, -203715, "none"], [478, "2026-04-13", "Cha Cha Ethics", "Maitland", "R8", 2.7, "WIN", 1, 2550.0, -201165, "none"], [479, "2026-04-13", "Elite General", "Northam", "R10", 8.5, "PLACE", 2, -1500.0, -202665, "M1"], [480, "2026-04-13", "Fire Island", "Nowra", "R3", 5.0, "3th", 3, -1500.0, -204165, "none"], [481, "2026-04-13", "Sally Shine", "Warrnambool", "R2", 4.6, "3th", 3, -1500.0, -205665, "none"], [482, "2026-04-13", "Borough Banker", "Warrnambool", "R11", 2.7, "5th", 5, -1500.0, -207165, "M2r"], [483, "2026-04-13", "Maddy Giblet", "Warrnambool", "R12", 2.4, "3th", 3, -1500.0, -208665, "M2r"], [484, "2026-04-14", "Innovation", "Bulli", "R2", 3.4, "PLACE", 3, -1500.0, -210165, "none"], [485, "2026-04-14", "Reindeer Hedghog", "Hobart", "R10", 2.1, "PLACE", 3, -1500.0, -211665, "none"], [486, "2026-04-14", "Solar Gold", "Horsham", "R2", 18.0, "3th", 3, -1500.0, -213165, "none"], [487, "2026-04-14", "Is He Lucky", "Horsham", "R3", 2.6, "WIN", 1, 2400.0, -210765, "none"], [488, "2026-04-14", "Idea's Girl", "Ladbrokes Q1 Lakeside", "R8", null, "WIN", 1, -1500.0, -212265, "none"], [489, "2026-04-14", "Paradise Paris", "Mandurah", "R2", 7.0, "WIN", 1, 9000.0, -203265, "none"], [490, "2026-04-14", "Radio Ramsgate", "Mandurah", "R10", 12.0, "WIN", 1, 16500.0, -186765, "M1+M2r"], [491, "2026-04-14", "Merry Myrtle", "Warragul", "R3", 2.3, "3th", 3, -1500.0, -188265, "none"], [492, "2026-04-15", "High Cotton", "Bendigo", "R6", 2.3, "WIN", 1, 1950.0, -186315, "M2r"], [493, "2026-04-15", "Lizard Country", "Bendigo", "R8", 9.0, "PLACE", 2, -1500.0, -187815, "M1"], [494, "2026-04-15", "It's Me Hi", "Capalaba", "R2", 14.0, "4th", 4, -1500.0, -189315, "none"], [495, "2026-04-15", "Fins Up Wendy", "Capalaba", "R3", 3.5, "3th", 3, -1500.0, -190815, "none"], [496, "2026-04-15", "Pop Said Yes", "Capalaba", "R7", 2.1, "WIN", 1, 1650.0, -189165, "none"], [497, "2026-04-15", "Hayden's Gift", "Ladbrokes Q1 Lakeside", "R5", null, "WIN", 1, -1500.0, -190665, "none"], [498, "2026-04-15", "Son Of Zatara", "Mandurah", "R1", 2.1, "WIN", 1, 1650.0, -189015, "none"], [499, "2026-04-15", "Yarramundi Opal", "Murray Bridge Straight", "R5", 15.0, "5th", 5, -1500.0, -190515, "M1"], [500, "2026-04-15", "Red Said So", "Murray Bridge Straight", "R7", 2.7, "WIN", 1, 2550.0, -187965, "none"]];
+
+// Model definitions
+const MODELS        = [{"name": "Golden", "emoji": "⭐", "type": "standard", "criteria": "≤$2.00 odds · ≤1 missing", "bets": 0, "wins": 0, "places": 0, "roi": 0, "days": 0, "freq": 0.0, "total_days": 90}, {"name": "M1", "emoji": "⚡", "type": "standard", "criteria": "Odds ≥$5 · Weekday · R≥4", "bets": 11, "wins": 1, "places": 7, "roi": -27.3, "days": 9, "freq": 0.12, "total_days": 90}, {"name": "M2r", "emoji": "🔬", "type": "standard", "criteria": "Dual rank=1 · Weekday · R≥4", "bets": 81, "wins": 50, "places": 61, "roi": 17.1, "days": 46, "freq": 0.9, "total_days": 90}, {"name": "M1+M2r", "emoji": "💎", "type": "standard", "criteria": "Both M1 + M2r conditions", "bets": 12, "wins": 3, "places": 8, "roi": 104.2, "days": 11, "freq": 0.13, "total_days": 90}, {"name": "S9", "emoji": "💫", "type": "standard", "criteria": "(M1 or M2r) + lx_avg rank=1 · Field ≥7 · Not Tue", "bets": 0, "wins": 0, "places": 0, "roi": 0, "days": 0, "freq": 0.0, "total_days": 90}, {"name": "S10", "emoji": "🌊", "type": "standard", "criteria": "lx_avg=1 + box 7/8 rank=1 · Weekday · Not Tue", "bets": 0, "wins": 0, "places": 0, "roi": 0, "days": 0, "freq": 0.0, "total_days": 90}, {"name": "Other", "emoji": "📋", "type": "standard", "criteria": "Anything not qualifying for a specific system", "bets": 0, "wins": 0, "places": 0, "roi": 0, "days": 0, "freq": 0.0, "total_days": 90}, {"name": "Low Data", "emoji": "⚠️", "type": "standard", "criteria": ">2 missing box data — too many unknowns", "bets": 0, "wins": 0, "places": 0, "roi": 0, "days": 0, "freq": 0.0, "total_days": 90}];
+
+// Track stats — {name: {bets, wins, places}}
+const TRACK_STATS   = {"Angle Park": {"bets": 26, "wins": 10, "places": 18}, "Launceston": {"bets": 2, "wins": 1, "places": 2}, "Maitland": {"bets": 16, "wins": 5, "places": 10}, "Nowra": {"bets": 17, "wins": 8, "places": 9}, "Shepparton": {"bets": 8, "wins": 7, "places": 8}, "Wagga": {"bets": 8, "wins": 4, "places": 6}, "Warrnambool": {"bets": 12, "wins": 5, "places": 9}, "Geelong": {"bets": 12, "wins": 4, "places": 9}, "Gosford": {"bets": 4, "wins": 1, "places": 2}, "Horsham": {"bets": 10, "wins": 1, "places": 4}, "Mandurah": {"bets": 23, "wins": 11, "places": 16}, "Murray Bridge Straight": {"bets": 21, "wins": 6, "places": 10}, "Warragul": {"bets": 9, "wins": 4, "places": 6}, "Capalaba": {"bets": 40, "wins": 11, "places": 27}, "Meadows": {"bets": 3, "wins": 0, "places": 1}, "Sale": {"bets": 16, "wins": 4, "places": 9}, "Temora": {"bets": 7, "wins": 2, "places": 2}, "Ladbrokes Q2 Parklands": {"bets": 11, "wins": 6, "places": 8}, "Wentworth Park": {"bets": 6, "wins": 4, "places": 6}, "Healesville": {"bets": 34, "wins": 9, "places": 20}, "Ladbrokes Q1 Lakeside": {"bets": 30, "wins": 12, "places": 21}, "The Gardens": {"bets": 13, "wins": 4, "places": 8}, "Cannington": {"bets": 5, "wins": 4, "places": 4}, "Darwin": {"bets": 22, "wins": 5, "places": 13}, "Mount Gambier": {"bets": 25, "wins": 10, "places": 18}, "Murray Bridge": {"bets": 10, "wins": 4, "places": 8}, "Dubbo": {"bets": 3, "wins": 2, "places": 2}, "Bendigo": {"bets": 5, "wins": 2, "places": 3}, "Rockhampton": {"bets": 10, "wins": 4, "places": 4}, "Taree": {"bets": 12, "wins": 4, "places": 8}, "Hobart": {"bets": 8, "wins": 6, "places": 8}, "Richmond": {"bets": 14, "wins": 5, "places": 8}, "Townsville": {"bets": 5, "wins": 1, "places": 2}, "Gunnedah": {"bets": 1, "wins": 0, "places": 0}, "Bulli": {"bets": 7, "wins": 1, "places": 3}, "Grafton": {"bets": 11, "wins": 2, "places": 6}, "Ballarat": {"bets": 16, "wins": 4, "places": 9}, "Casino": {"bets": 6, "wins": 1, "places": 4}, "Sandown": {"bets": 2, "wins": 1, "places": 2}, "Gawler": {"bets": 6, "wins": 2, "places": 5}, "Goulburn": {"bets": 3, "wins": 0, "places": 2}, "Northam": {"bets": 1, "wins": 0, "places": 1}};
+
+// Month list
+const MONTHS_MAP    = {"2025-12": "Dec '25", "2026-01": "Jan '26", "2026-02": "Feb '26", "2026-03": "Mar '26", "2026-04": "Apr '26"};
+
+// ══════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+function nav(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('show');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════════
+const ORDS = [,'1st','2nd','3rd'];
+function ord(n) { return ORDS[n] || (n + 'th'); }
+
+function fmtPL(v, mono=true) {
+  const cls = v >= 0 ? 'pos' : 'neg';
+  const abs = Math.abs(v);
+  const s = (v >= 0 ? '+$' : '-$') + abs.toLocaleString();
+  return `<span class="${cls}${mono?' td-num':''}">${s}</span>`;
+}
+function fmtPLTxt(v) {
+  const a = Math.abs(v);
+  return (v >= 0 ? '+$' : '-$') + (a >= 1000 ? (a/1000).toFixed(1)+'k' : a.toLocaleString());
+}
+function fmtPct(n, d) {
+  if (!d) return '—';
+  return ((n/d)*100).toFixed(1) + '%';
+}
+
+const TAG_INFO = {
+  'M1+M2r': {cls:'tag-m1m2r', emoji:'💎'},
+  'M2r':    {cls:'tag-m2r',   emoji:'🔬'},
+  'M1':     {cls:'tag-m1',    emoji:'⚡'},
+  'S9':     {cls:'tag-s9',    emoji:'💫'},
+  'S10':    {cls:'tag-s10',   emoji:'🌊'},
+  'Golden': {cls:'tag-gold',  emoji:'⭐'},
+  'Low':    {cls:'tag-low',   emoji:'⚠️'},
+};
+
+function tagHtml(t) {
+  if (!t || t === 'none') return '';
+  // Check promoted models
+  const pm = MODELS.find(m => m.name === t && m.type === 'promoted');
+  if (pm) return `<span class="tag tag-promo">${pm.emoji} ${t}</span>`;
+  const info = TAG_INFO[t];
+  if (!info) return `<span class="tag tag-s10">${t}</span>`;
+  return `<span class="tag ${info.cls}">${info.emoji} ${t}</span>`;
+}
+
+function statCard(lbl, val, cls='') {
+  return `<div class="stat-card ${cls}">
+    <div class="lbl">${lbl}</div><div class="val">${val}</div></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TODAY PAGE
+// ══════════════════════════════════════════════════════════════════
+function renderToday() {
+  // Summary cards
+  const golden = TODAY_SEL.filter(s => s.category === 'golden');
+  const totalStake = golden.length * 1500;
+  document.getElementById('today-stats').innerHTML =
+    statCard('Golden Selections', golden.length, 'gold') +
+    statCard('Total to Stake', '$' + totalStake.toLocaleString(), 'green') +
+    statCard('Bankroll', '$' + BANKROLL.toLocaleString()) +
+    statCard('Other Selections', TODAY_SEL.filter(s=>s.category!=='golden'&&s.category!=='lowdata').length);
+
+  const todaySub = `${TODAY_SEL.length} total selections · Bankroll $${BANKROLL.toLocaleString()}`;
+  document.getElementById('today-sub').textContent = todaySub;
+
+  // Group by category
+  const categories = [
+    {key:'golden',  emoji:'⭐', label:'Golden Rule',  cls:'golden-card', stake:true},
+    {key:'m1m2r',   emoji:'💎', label:'M1+M2r',       cls:'',            stake:false},
+    {key:'s9',      emoji:'💫', label:'S9',            cls:'',            stake:false},
+    {key:'s10',     emoji:'🌊', label:'S10',           cls:'',            stake:false},
+    {key:'other',   emoji:'📋', label:'Other',         cls:'',            stake:false},
+    {key:'lowdata', emoji:'⚠️', label:'Low Data',      cls:'',            stake:false},
+  ];
+  // Add promoted
+  MODELS.filter(m=>m.type==='promoted').forEach(m => {
+    categories.push({key:'promo_'+m.name, emoji:m.emoji, label:m.name, cls:'', stake:false, promoName:m.name});
+  });
+
+  let html = '';
+  for (const cat of categories) {
+    const sels = cat.promoName
+      ? TODAY_SEL.filter(s => s.tag === cat.promoName)
+      : TODAY_SEL.filter(s => s.category === cat.key);
+    if (!sels.length) continue;
+
+    html += `<div class="section-label">${cat.emoji} ${cat.label} — ${sels.length} selection${sels.length>1?'s':''}</div>`;
+    html += '<div class="sel-grid">';
+    sels.forEach(s => {
+      const ret = s.odds ? (s.odds * 1500).toFixed(0) : '—';
+      html += `<div class="sel-card ${cat.cls}">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">${s.dog}</div>
+            <div class="sel-meta">${s.track} · R${s.race} · Box ${s.box}</div>
+            <div class="sel-meta">${s.time ? '🕐 ' + s.time + ' · ' : ''}${s.missing} missing data</div>
+          </div>
+          <div class="sel-odds">${s.odds ? '$'+s.odds.toFixed(2) : '—'}</div>
+        </div>
+        ${tagHtml(s.tag||cat.label)}
+        ${cat.stake ? `<div class="sel-stake">
+          <span class="stake-lbl">Stake $1,500 @ ${s.odds ? s.odds.toFixed(2) : '—'}</span>
+          <span class="stake-val">→ $${parseInt(ret).toLocaleString()}</span>
+        </div>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  }
+  if (!TODAY_SEL.length) html = '<p style="color:var(--txt3);padding:20px 0">No selections for today.</p>';
+  document.getElementById('selections-container').innerHTML = html;
+
+  // Yesterday
+  if (YESTERDAY && YESTERDAY.dogs && YESTERDAY.dogs.length) {
+    const yb = YESTERDAY.bets, yw = YESTERDAY.wins, yp = YESTERDAY.places;
+    const yROI = YESTERDAY.roi || 0;
+    document.getElementById('yesterday-stats').innerHTML =
+      statCard('Bets', yb) +
+      statCard('Won', yw, yw/yb >= .6 ? 'green' : '') +
+      statCard('Placed', yp) +
+      statCard('ROI', (yROI>=0?'+':'')+yROI.toFixed(1)+'%', yROI>=0?'green':'red');
+
+    let yHtml = '<div class="sel-grid">';
+    YESTERDAY.dogs.forEach(d => {
+      const resClass = d.result==='WIN'?'win-txt':d.result==='PLACE'?'plc-txt':'los-txt';
+      const pnlS = d.pnl >= 0 ? `<span class="pos">+$${d.pnl.toLocaleString()}</span>`
+                              : `<span class="neg">-$${Math.abs(d.pnl).toLocaleString()}</span>`;
+      yHtml += `<div class="sel-card">
+        <div class="sel-head">
+          <div>
+            <div class="sel-name">${d.dog}</div>
+            <div class="sel-meta">${d.track} · R${d.race}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="${resClass}" style="font-family:var(--font-mono);font-size:16px;font-weight:600">${d.result}</div>
+            <div style="font-size:11px;color:var(--txt3);font-family:var(--font-mono)">${ord(d.pos)}</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          ${tagHtml(d.tag)}
+          <div style="font-family:var(--font-mono);font-size:13px">${d.odds?'$'+d.odds.toFixed(2):'—'} → ${pnlS}</div>
+        </div>
+      </div>`;
+    });
+    yHtml += '</div>';
+    document.getElementById('yesterday-dogs').innerHTML = yHtml;
+  } else {
+    document.getElementById('yesterday-stats').innerHTML = '<p style="color:var(--txt3)">No results recorded yet.</p>';
+    document.getElementById('yesterday-dogs').innerHTML = '';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// RESULTS PAGE
+// ══════════════════════════════════════════════════════════════════
+let rSortCol = 'n', rSortAsc = true;
+
+function rSort(col) {
+  rSortAsc = rSortCol === col ? !rSortAsc : true;
+  rSortCol = col;
+  renderResults();
+}
+
+// Populate month dropdown
+function initResultsMonths() {
+  const sel = document.getElementById('rf-month');
+  Object.keys(MONTHS_MAP).sort().reverse().forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = MONTHS_MAP[m];
+    sel.appendChild(opt);
+  });
+}
+
+function getFilteredResults() {
+  const res   = document.getElementById('rf-res').value;
+  const model = document.getElementById('rf-model').value;
+  const month = document.getElementById('rf-month').value;
+  const srch  = document.getElementById('rf-search').value.toLowerCase();
+  return RESULTS_RAW.filter(r => {
+    const [n,date,dog,track,race,odds,result,pos,pnl,cum,tag] = r;
+    if (res === 'LOSS' && (result==='WIN'||result==='PLACE')) return false;
+    if (res !== 'all' && res !== 'LOSS' && result !== res) return false;
+    if (model !== 'all' && tag !== model) return false;
+    if (month !== 'all' && !date.startsWith(month)) return false;
+    if (srch && !dog.toLowerCase().includes(srch) && !track.toLowerCase().includes(srch)) return false;
+    return true;
+  });
+}
+
+function renderResults() {
+  const model = document.getElementById('rf-model').value;
+  let rows = getFilteredResults();
+
+  const colIdx = {n:0,date:1,dog:2,track:3,odds:5,model:10,result:6,pos:7,pnl:8,cum:9};
+  const ci = colIdx[rSortCol] ?? 0;
+  rows.sort((a,b) => {
+    let av=a[ci], bv=b[ci];
+    if (typeof av === 'string') return rSortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return rSortAsc ? av-bv : bv-av;
+  });
+
+  // Update sort indicators
+  document.querySelectorAll('#page-results th').forEach((th,i) => {
+    th.className = '';
+    if (Object.values(colIdx).indexOf(ci) === i) {
+      th.className = rSortAsc ? 'sort-asc' : 'sort-desc';
+    }
+  });
+
+  document.getElementById('res-count').textContent = rows.length + ' bets';
+  document.getElementById('month-badge').textContent =
+    model === 'all' ? '' : `· ${model} only`;
+
+  // Summary cards
+  const wins   = rows.filter(r=>r[6]==='WIN').length;
+  const places = rows.filter(r=>r[6]==='WIN'||r[6]==='PLACE').length;
+  const tpl    = rows.reduce((a,r)=>a+r[8],0);
+  const n      = rows.length;
+  const roi    = n ? ((tpl/(n*1500))*100).toFixed(1)+'%' : '—';
+  // Win-rate-focused cards for All / Other / Low Data (mixed populations — P/L misleading)
+  const isWinRateMode = (model === 'all' || model === 'Other' || model === 'Low Data');
+  if (isWinRateMode) {
+    document.getElementById('results-stats').innerHTML =
+      statCard('Win Rate', fmtPct(wins,n), 'gold') +
+      statCard('Wins', wins) +
+      statCard('Place Rate', fmtPct(places,n), 'gold') +
+      statCard('Places', places) +
+      statCard('Bets', n) +
+      statCard('P/L (mixed)', '—');
+  } else {
+    document.getElementById('results-stats').innerHTML =
+      statCard('Win Rate', fmtPct(wins,n), 'gold') +
+      statCard('Wins', wins, wins>0?'green':'') +
+      statCard('Total P/L', fmtPLTxt(tpl), tpl>=0?'green':'red') +
+      statCard('ROI', (tpl>=0?'+':'')+roi, tpl>=0?'green':'red') +
+      statCard('Place Rate', fmtPct(places,n)) +
+      statCard('Bets', n);
+  }
+
+  // Monthly cards
+  const mpl = {};
+  Object.keys(MONTHS_MAP).forEach(m => mpl[m] = 0);
+  rows.forEach(r => { const m=r[1].slice(0,7); if(m in mpl) mpl[m]+=r[8]; });
+  document.getElementById('month-row').innerHTML =
+    Object.keys(MONTHS_MAP).sort().map(m => {
+      const v = mpl[m];
+      const cls = v > 0 ? 'pos' : v < 0 ? 'neg' : '';
+      return `<div class="month-card ${cls}" onclick="filterMonth('${m}')">
+        <div class="mlbl">${MONTHS_MAP[m]}</div>
+        <div class="mval">${fmtPLTxt(v)}</div>
+      </div>`;
+    }).join('');
+
+  // Table
+  const tbody = rows.map(r => {
+    const [n,date,dog,track,race,odds,result,pos,pnl,cum,tag] = r;
+    const rc = result==='WIN'?'win-txt':result==='PLACE'?'plc-txt':'los-txt';
+    return `<tr>
+      <td class="td-muted">${n}</td>
+      <td class="td-muted">${date}</td>
+      <td style="font-weight:500">${dog}</td>
+      <td class="td-muted">${track}${race?' · '+race:''}</td>
+      <td class="td-num">${odds!=null?'$'+odds.toFixed(2):'—'}</td>
+      <td>${tagHtml(tag)}</td>
+      <td class="${rc}">${result}</td>
+      <td class="td-muted">${ord(pos)}</td>
+      <td>${fmtPL(pnl)}</td>
+      <td>${fmtPL(cum)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('results-tbody').innerHTML =
+    tbody || `<tr><td colspan="10" class="no-rows">No results match your filters</td></tr>`;
+
+  // Refresh whichever sub-tab is currently visible so the view stays in sync
+  if (typeof activeSub !== 'undefined') {
+    if (activeSub === 'days')   renderDays();
+    if (activeSub === 'tracks') renderSubTracks();
+    if (activeSub === 'models') renderSubModels();
+  }
+}
+
+function filterMonth(m) {
+  document.getElementById('rf-month').value = m;
+  renderResults();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// RESULTS — SUB-TABS (Bets / By Day / By Track / By Model)
+// ══════════════════════════════════════════════════════════════════
+let activeSub = 'bets';
+let dSortCol = 'date', dSortAsc = true;
+let tSortCol = 'pnl',  tSortAsc = false;
+let smSortCol = 'roi', smSortAsc = false;
+
+function switchSub(name, btn) {
+  activeSub = name;
+  document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('show'));
+  document.getElementById('sub-' + name).classList.add('show');
+  if (name === 'days')   renderDays();
+  if (name === 'tracks') renderSubTracks();
+  if (name === 'models') renderSubModels();
+}
+
+function sortDays(col)      { dSortAsc  = dSortCol  === col ? !dSortAsc  : true; dSortCol  = col; renderDays(); }
+function sortTracks(col)    { tSortAsc  = tSortCol  === col ? !tSortAsc  : false; tSortCol  = col; renderSubTracks(); }
+function sortSubModels(col) { smSortAsc = smSortCol === col ? !smSortAsc : false; smSortCol = col; renderSubModels(); }
+
+function renderDays() {
+  const rows = getFilteredResults();
+  const byDay = {};
+  rows.forEach(r => {
+    const [n,date,dog,track,race,odds,result,pos,pnl] = r;
+    if (!byDay[date]) byDay[date] = {date, bets:0, wins:0, pnl:0, best:null};
+    const e = byDay[date];
+    e.bets++;
+    if (result === 'WIN') { e.wins++; if (!e.best || pnl > e.best.pnl) e.best = {dog,odds,pnl}; }
+    e.pnl += pnl;
+  });
+  let arr = Object.values(byDay);
+  arr.forEach(e => { e.wpct = e.bets ? (e.wins/e.bets)*100 : 0; });
+
+  arr.sort((a,b) => {
+    let av = a[dSortCol], bv = b[dSortCol];
+    if (typeof av === 'string') return dSortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return dSortAsc ? av-bv : bv-av;
+  });
+
+  // Cumulative P/L follows chronological order regardless of sort
+  const chronoByDay = {};
+  Object.values(byDay).sort((a,b) => a.date.localeCompare(b.date))
+    .reduce((cum, e) => { chronoByDay[e.date] = cum + e.pnl; return cum + e.pnl; }, 0);
+
+  document.getElementById('days-tbody').innerHTML = arr.length
+    ? arr.map(e => {
+        const best = e.best
+          ? `${e.best.dog} @ $${e.best.odds.toFixed(2)} <span class="pos">+$${e.best.pnl.toLocaleString()}</span>`
+          : '<span class="td-muted">—</span>';
+        return `<tr>
+          <td class="td-muted">${e.date}</td>
+          <td>${e.bets}</td>
+          <td>${e.wins}</td>
+          <td>${e.wpct.toFixed(1)}%</td>
+          <td>${fmtPL(e.pnl)}</td>
+          <td>${fmtPL(chronoByDay[e.date])}</td>
+          <td>${best}</td>
+        </tr>`;
+      }).join('')
+    : `<tr><td colspan="7" class="no-rows">No days match the current filters</td></tr>`;
+}
+
+function renderSubTracks() {
+  const rows = getFilteredResults();
+  const byTrack = {};
+  rows.forEach(r => {
+    const [n,date,dog,track,race,odds,result,pos,pnl] = r;
+    const key = (track || '?').trim();
+    if (!byTrack[key]) byTrack[key] = {name:key, bets:0, wins:0, places:0, pnl:0};
+    const e = byTrack[key];
+    e.bets++;
+    if (result === 'WIN') { e.wins++; e.places++; }
+    else if (result === 'PLACE') e.places++;
+    e.pnl += pnl;
+  });
+  let arr = Object.values(byTrack);
+  arr.forEach(e => {
+    e.wpct = e.bets ? (e.wins/e.bets)*100 : 0;
+    e.ppct = e.bets ? (e.places/e.bets)*100 : 0;
+    e.roi  = e.bets ? (e.pnl/(e.bets*1500))*100 : 0;
+  });
+
+  arr.sort((a,b) => {
+    let av = a[tSortCol], bv = b[tSortCol];
+    if (typeof av === 'string') return tSortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return tSortAsc ? av-bv : bv-av;
+  });
+
+  document.getElementById('tracks-tbody').innerHTML = arr.length
+    ? arr.map(e => {
+        const roiCls = e.roi >= 0 ? 'pos' : 'neg';
+        return `<tr>
+          <td style="font-weight:500">${e.name}</td>
+          <td>${e.bets}</td>
+          <td>${e.wins}</td>
+          <td>${e.wpct.toFixed(1)}%</td>
+          <td>${e.ppct.toFixed(1)}%</td>
+          <td>${fmtPL(e.pnl)}</td>
+          <td><span class="${roiCls} td-num">${e.roi >= 0 ? '+' : ''}${e.roi.toFixed(1)}%</span></td>
+        </tr>`;
+      }).join('')
+    : `<tr><td colspan="7" class="no-rows">No tracks match the current filters</td></tr>`;
+}
+
+function renderSubModels() {
+  const rows = getFilteredResults();
+  const byModel = {};
+  rows.forEach(r => {
+    const [n,date,dog,track,race,odds,result,pos,pnl,cum,tag] = r;
+    const key = tag || '(untagged)';
+    if (!byModel[key]) byModel[key] = {name:key, bets:0, wins:0, places:0, pnl:0};
+    const e = byModel[key];
+    e.bets++;
+    if (result === 'WIN') { e.wins++; e.places++; }
+    else if (result === 'PLACE') e.places++;
+    e.pnl += pnl;
+  });
+  let arr = Object.values(byModel);
+  arr.forEach(e => {
+    e.wpct = e.bets ? (e.wins/e.bets)*100 : 0;
+    e.ppct = e.bets ? (e.places/e.bets)*100 : 0;
+    e.roi  = e.bets ? (e.pnl/(e.bets*1500))*100 : 0;
+  });
+
+  // Priority order for models
+  const order = ['Golden','M1','M2r','M1+M2r','S9','S10','Other','Low Data','(untagged)'];
+  if (smSortCol === 'name') {
+    arr.sort((a,b) => smSortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+  } else {
+    arr.sort((a,b) => {
+      let av = a[smSortCol], bv = b[smSortCol];
+      return smSortAsc ? av-bv : bv-av;
+    });
+  }
+
+  const systems = new Set(['Golden','M1','M2r','M1+M2r','S9','S10']);
+
+  document.getElementById('submodels-tbody').innerHTML = arr.length
+    ? arr.map(e => {
+        const isSystem = systems.has(e.name);
+        const pnlCell = isSystem ? fmtPL(e.pnl) : '<span class="td-muted">—</span>';
+        const roiCls = e.roi >= 0 ? 'pos' : 'neg';
+        const roiCell = isSystem
+          ? `<span class="${roiCls} td-num">${e.roi >= 0 ? '+' : ''}${e.roi.toFixed(1)}%</span>`
+          : '<span class="td-muted">—</span>';
+        return `<tr>
+          <td>${tagHtml(e.name)}</td>
+          <td>${e.bets}</td>
+          <td>${e.wins}</td>
+          <td>${e.wpct.toFixed(1)}%</td>
+          <td>${e.ppct.toFixed(1)}%</td>
+          <td>${pnlCell}</td>
+          <td>${roiCell}</td>
+        </tr>`;
+      }).join('')
+    : `<tr><td colspan="7" class="no-rows">No models match the current filters</td></tr>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MODELS PAGE
+// ══════════════════════════════════════════════════════════════════
+function renderModels() {
+  const maxROI = Math.max(...MODELS.map(m=>Math.abs(m.roi||0)), 1);
+
+  document.getElementById('model-rows').innerHTML = MODELS.map(m => {
+    const roiPct = m.roi || 0;
+    const barW   = Math.min(Math.abs(roiPct)/maxROI*100, 100);
+    const roiCls = roiPct >= 0 ? 'pos' : 'neg';
+    const fillCls = roiPct >= 0 ? '' : 'neg';
+    const tierBadge = m.tier_label
+      ? `<span style="font-size:10px;color:var(--txt3);font-family:var(--font-mono)">${{1:'🥇',2:'🥈',3:'🥉'}[m.tier]||''} ${m.tier_label}</span>`
+      : '';
+    return `<div class="model-row" onclick="filterToModel('${m.name}')" style="cursor:pointer" title="Click to filter Results table">
+      <div class="model-name-cell">
+        <span class="model-emoji">${m.emoji}</span>
+        <div>
+          <div class="model-label">${m.name}</div>
+          ${tierBadge}
+          <div class="model-sub">${m.freq ? m.freq.toFixed(2)+'/day' : '—'}</div>
+        </div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">${m.bets||0}</div>
+        <div class="ms-lbl">Bets</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--gold)">${fmtPct(m.wins,m.bets)}</div>
+        <div class="ms-lbl">Win %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val">${fmtPct(m.places,m.bets)}</div>
+        <div class="ms-lbl">Place %</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val ${roiCls}">${roiPct>=0?'+':''}${roiPct.toFixed(1)}%</div>
+        <div class="ms-lbl">ROI</div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar">
+          <div class="roi-fill ${fillCls}" style="width:${barW}%"></div>
+        </div>
+        <span class="td-muted" style="font-size:11px;font-family:var(--font-mono);white-space:nowrap">
+          ${m.days||0}/${m.total_days||0} days
+        </span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Position breakdown
+  const posData = [{"label": "\u2b50 Golden Rule", "counts": [14, 3, 1, 0]}, {"label": "All Selections", "counts": [20, 9, 5, 2]}];
+  document.getElementById('pos-breakdown').innerHTML = posData.map(pd => {
+    const tot = pd.counts.reduce((a,b)=>a+b,0);
+    const lbls = ['1st','2nd','3rd','4th+'];
+    return `<div class="pos-block">
+      <div class="pos-block-title">${pd.label}</div>
+      ${pd.counts.map((c,i) => {
+        const pct = tot ? c/tot*100 : 0;
+        return `<div class="pos-row">
+          <span class="pos-lbl">${lbls[i]}</span>
+          <div class="pos-bar-wrap"><div class="pos-bar-fill" style="width:${pct}%"></div></div>
+          <span class="pos-pct">${pct.toFixed(0)}%</span>
+          <span class="pos-n">${c}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function filterToModel(name) {
+  document.getElementById('rf-model').value = name;
+  nav('results', document.querySelectorAll('.nav-btn')[1]);
+  renderResults();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TRACKS PAGE
+// ══════════════════════════════════════════════════════════════════
+function renderTracks() {
+  const sort  = document.getElementById('track-sort').value;
+  const srch  = document.getElementById('track-search').value.toLowerCase();
+  let tracks  = Object.entries(TRACK_STATS).filter(([n]) =>
+    !srch || n.toLowerCase().includes(srch));
+
+  tracks.sort((a,b) => {
+    const [an,as] = a, [bn,bs] = b;
+    if (sort === 'win')   return (bs.wins/Math.max(bs.bets,1)) - (as.wins/Math.max(as.bets,1));
+    if (sort === 'place') return (bs.places/Math.max(bs.bets,1)) - (as.places/Math.max(as.bets,1));
+    if (sort === 'bets')  return bs.bets - as.bets;
+    return an.localeCompare(bn);
+  });
+
+  document.getElementById('track-grid').innerHTML = tracks.map(([name, ts]) => {
+    const winPct   = ts.bets ? ts.wins/ts.bets*100 : 0;
+    const placePct = ts.bets ? ts.places/ts.bets*100 : 0;
+    const fillColour = winPct >= 60 ? 'var(--green)' :
+                       winPct >= 40 ? 'var(--gold)'  : 'var(--red)';
+    return `<div class="track-card">
+      <div class="track-name">${name}</div>
+      <div class="track-stats">
+        <span>${ts.bets} bets</span>
+        <span style="color:var(--green)">${winPct.toFixed(0)}% W</span>
+        <span style="color:var(--blue)">${placePct.toFixed(0)}% P</span>
+      </div>
+      <div class="track-bar">
+        <div class="track-fill" style="width:${winPct}%;background:${fillColour}"></div>
+      </div>
+    </div>`;
+  }).join('') || '<p style="color:var(--txt3)">No tracks found.</p>';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// GLOSSARY PAGE
+// ══════════════════════════════════════════════════════════════════
+function renderGlossary() {
+  const GLOSS = [
+    {
+      emoji:'⭐', name:'Golden Rule', cls:'tag-gold',
+      criteria:'Odds ≤ $2.00 AND ≤1 dog missing box data in the race',
+      desc:'The highest-conviction selections. Short-priced favourites in races with near-complete historical time data. The combination of short odds and complete data makes these the most reliable signal in the system.',
+      stats: MODELS.find(m=>m.name==='Golden')
+    },
+    {
+      emoji:'⚡', name:'M1 — Longshot', cls:'tag-m1',
+      criteria:'Odds ≥ $5.00 · Weekday · Race ≥ R4 · 0 missing · No bad tracks',
+      desc:'Targets big-priced dogs where the model\'s time rankings strongly disagree with the market. When the model has a dog ranked #1 across all metrics but the market has it at $5+, that gap represents potential value.',
+      stats: MODELS.find(m=>m.name==='M1')
+    },
+    {
+      emoji:'🔬', name:'M2r — Dual Rank', cls:'tag-m2r',
+      criteria:'avg_projected_race_dist_rank = 1 AND avg_actual_track_dist_rank = 1 · Weekday · R≥4',
+      desc:'The dog must rank #1 on both its projected race distance time AND its actual track+distance time simultaneously. Two independent metrics pointing to the same dog is a strong signal.',
+      stats: MODELS.find(m=>m.name==='M2r')
+    },
+    {
+      emoji:'💎', name:'M1+M2r — Double Qualifier', cls:'tag-m1m2r',
+      criteria:'Satisfies BOTH M1 and M2r criteria simultaneously',
+      desc:'The rarest and highest-conviction selection type. A dog that is both a longshot ($5+) AND ranks #1 on both time metrics. These are infrequent but represent the strongest disagreement between model and market.',
+      stats: MODELS.find(m=>m.name==='M1+M2r')
+    },
+    {
+      emoji:'💫', name:'S9 — Premium Overlap', cls:'tag-s9',
+      criteria:'Golden Rule criteria AND Dual Rank=1 criteria both satisfied',
+      desc:'The intersection of the two strongest signals: a short-priced favourite in a complete-data race that also ranks #1 on both projected and actual time metrics. Best of both worlds.',
+      stats: MODELS.find(m=>m.name==='S9')
+    },
+    {
+      emoji:'🌊', name:'S10 — Broader Pool', cls:'tag-s10',
+      criteria:'Odds > $2.00 OR ≥2 dogs missing box data in the race',
+      desc:'Selections outside the Golden criteria — either longer-priced or in races with some missing data. Lower confidence than Golden but still ranked #1 or #2 by the pipeline. Worth monitoring but treat with more caution.',
+      stats: MODELS.find(m=>m.name==='S10')
+    },
+    {
+      emoji:'⚠️', name:'Low Data', cls:'tag-low',
+      criteria:'More than 2 dogs missing box actual time data in the race',
+      desc:'Selections in races where the data picture is incomplete. The model can still rank dogs but with less information to work with. Historical win rate is meaningfully lower — only consider if comfortable with the additional uncertainty.',
+      stats: MODELS.find(m=>m.name==='Low Data')
+    },
+  ];
+
+  document.getElementById('glossary-grid').innerHTML = GLOSS.map(g => {
+    const s = g.stats || {};
+    return `<div class="gloss-card">
+      <div class="gloss-head">
+        <span class="gloss-emoji">${g.emoji}</span>
+        <span class="gloss-name">${g.name}</span>
+      </div>
+      <div class="gloss-criteria">${g.criteria}</div>
+      <div class="gloss-desc">${g.desc}</div>
+      ${s.bets ? `<div class="gloss-stats">
+        <div class="gloss-stat"><div class="gsl">Bets</div><div class="gsv">${s.bets}</div></div>
+        <div class="gloss-stat"><div class="gsl">Win %</div><div class="gsv">${fmtPct(s.wins,s.bets)}</div></div>
+        <div class="gloss-stat"><div class="gsl">ROI</div>
+          <div class="gsv ${s.roi>=0?'pos':'neg'}">${s.roi>=0?'+':''}${(s.roi||0).toFixed(1)}%</div></div>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+initResultsMonths();
+renderToday();
+renderResults();
+renderModels();
+renderTracks();
+renderGlossary();
+</script>
+
+
+</body></html>
