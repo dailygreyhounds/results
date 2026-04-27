@@ -314,6 +314,13 @@ footer{
 <div id="page-today" class="page show">
   <div class="section-title">Today's Selections</div>
   <div class="section-sub" id="today-sub">6 total selections · Bankroll $10,000</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+  <span style="font-size:13px;color:var(--txt3)">Adjust bankroll:</span>
+  <span style="font-size:13px;font-weight:500">$</span>
+  <input type="number" id="bankroll-input" min="100" max="10000000" step="500"
+    style="width:120px;font-size:14px;font-weight:500;text-align:center;padding:4px 8px;border:0.5px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--txt1)"
+    onchange="updateBankroll(this.value)" oninput="updateBankroll(this.value)">
+</div>
 
   <div id="today-stats" class="card-row"></div>
 
@@ -1490,6 +1497,9 @@ footer{
 // ══════════════════════════════════════════════════════════════════
 const TODAY_DATE    = "2026-04-27";
 const BANKROLL      = 10000;
+let userBankroll = BANKROLL;
+function scale(v) { return Math.round(v * userBankroll / BANKROLL); }
+function scaleF(v) { return v * userBankroll / BANKROLL; }
 
 // Today's selections — array of selection objects
 const TODAY_SEL     = [{"dog": "Scott Enigma", "track": "Shepparton", "race": "1", "box": "4", "odds": 6.5, "missing": 7, "time": "", "category": "lowdata", "tag": "Low", "rank1": 18, "stake": 1000}, {"dog": "Elite General", "track": "Northam", "race": "4", "box": "4", "odds": 2.6, "missing": 4, "time": "", "category": "lowdata", "tag": "Low", "rank1": 12, "stake": 550}, {"dog": "Ritza Wotton", "track": "Angle Park", "race": "4", "box": "2", "odds": 2.8, "missing": 2, "time": "", "category": "other", "tag": "Other", "rank1": 12, "stake": 550}, {"dog": "Zing Matilda", "track": "Angle Park", "race": "9", "box": "2", "odds": 2.7, "missing": 1, "time": "", "category": "other", "tag": "Other", "rank1": 9, "stake": 550}, {"dog": "Tinker Dot", "track": "Ballarat", "race": "11", "box": "7", "odds": 3.1, "missing": 1, "time": "", "category": "other", "tag": "Other", "rank1": 16, "stake": 1000}];
@@ -1570,9 +1580,16 @@ function statCard(lbl, val, cls='') {
 // ══════════════════════════════════════════════════════════════════
 // TODAY PAGE
 // ══════════════════════════════════════════════════════════════════
+updateBankroll(val) {
+  const v = parseInt(val);
+  if (!v || v < 100) return;
+  userBankroll = v;
+  renderToday();
+  renderResults();
+}
 function renderToday() {
   // Summary cards — all models treated equally
-  const totalStake = TODAY_SEL.reduce((a,s) => a + (s.stake || 0), 0);
+  const totalStake = TODAY_SEL.reduce((a,s) => a + scale(s.stake || 0), 0);
   const systemSels = TODAY_SEL.filter(s => s.category !== 'lowdata');
   const lowSels    = TODAY_SEL.filter(s => s.category === 'lowdata');
   const avgOdds    = TODAY_SEL.length
@@ -1588,6 +1605,7 @@ function renderToday() {
 
   const todaySub = `${TODAY_SEL.length} selections · $${totalStake.toLocaleString()} total stake · Bankroll $${BANKROLL.toLocaleString()}`;
   document.getElementById('today-sub').textContent = todaySub;
+  const bi = document.getElementById('bankroll-input'); if(bi && !bi.dataset.init){bi.value=userBankroll;bi.dataset.init='1';}
 
   // Group by category — all systems shown equally, ordered by priority
   const categories = [
@@ -1611,11 +1629,11 @@ function renderToday() {
       : TODAY_SEL.filter(s => s.category === cat.key);
     if (!sels.length) continue;
 
-    const catStake = sels.reduce((a,s) => a + (s.stake||0), 0);
+    const catStake = sels.reduce((a,s) => a + scale(s.stake||0), 0);
     html += `<div class="section-label">${cat.emoji} ${cat.label} — ${sels.length} selection${sels.length>1?'s':''} · $${catStake.toLocaleString()} stake</div>`;
     html += '<div class="sel-grid">';
     sels.forEach(s => {
-      const stake = s.stake || 0;
+      const stake = scale(s.stake || 0);
       const ret = s.odds && stake ? Math.round(s.odds * stake) : 0;
       const r1 = s.rank1 || 0;
       const r1Badge = r1 >= 19 ? ' <span style="color:var(--green);font-size:10px">★ r1×'+r1+'</span>'
@@ -1747,7 +1765,7 @@ function renderResults() {
   // Summary cards
   const wins   = rows.filter(r=>r[6]==='WIN').length;
   const places = rows.filter(r=>r[6]==='WIN'||r[6]==='PLACE').length;
-  const tpl    = rows.reduce((a,r)=>a+r[8],0);
+  const tpl    = rows.reduce((a,r)=>a+scaleF(r[8]),0);
   const n      = rows.length;
   const roi    = n ? ((tpl/(rows.reduce((a,r)=>a+(r[12]||0),0)||1))*100).toFixed(1)+'%' : '—';
   // Win-rate-focused cards for All / Other / Low Data (mixed populations — P/L misleading)
@@ -1801,8 +1819,8 @@ function renderResults() {
       <td>${tagHtml(tag)}</td>
       <td class="${rc}">${result}</td>
       <td class="td-muted">${ord(pos)}</td>
-      <td>${fmtPL(pnl)}</td>
-      <td>${fmtPL(filteredCum[n]||0)}</td>
+      <td>${fmtPL(scale(pnl))}</td>
+      <td>${fmtPL(scale(filteredCum[n]||0))}</td>
     </tr>`;
   }).join('');
   document.getElementById('results-tbody').innerHTML =
