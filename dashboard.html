@@ -1791,7 +1791,7 @@ function renderResults() {
   // Monthly cards
   const mpl = {};
   Object.keys(MONTHS_MAP).forEach(m => mpl[m] = 0);
-  rows.forEach(r => { const m=r[1].slice(0,7); if(m in mpl) mpl[m]+=r[8]; });
+  rows.forEach(r => { const m=r[1].slice(0,7); if(m in mpl) mpl[m]+=scaleF(r[8]); });
   document.getElementById('month-row').innerHTML =
     Object.keys(MONTHS_MAP).sort().map(m => {
       const v = mpl[m];
