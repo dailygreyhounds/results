@@ -1598,12 +1598,12 @@ function renderToday() {
   document.getElementById('today-stats').innerHTML =
     statCard('Selections', TODAY_SEL.length, 'gold') +
     statCard('Total Stake', '$' + totalStake.toLocaleString(), totalStake > 0 ? 'green' : '') +
-    statCard('Bankroll', '$' + BANKROLL.toLocaleString()) +
+    statCard('Bankroll', '$' + userBankroll.toLocaleString()) +
     statCard('Avg Odds', '$' + avgOdds) +
     statCard('Systems', systemSels.length) +
     (lowSels.length ? statCard('Low Data ⚠', lowSels.length, 'red') : '');
 
-  const todaySub = `${TODAY_SEL.length} selections · $${totalStake.toLocaleString()} total stake · Bankroll $${BANKROLL.toLocaleString()}`;
+  const todaySub = `${TODAY_SEL.length} selections · $${totalStake.toLocaleString()} total stake · Bankroll $${userBankroll.toLocaleString()}`;
   document.getElementById('today-sub').textContent = todaySub;
   const bi = document.getElementById('bankroll-input'); if(bi && !bi.dataset.init){bi.value=userBankroll;bi.dataset.init='1';}
 
@@ -1871,7 +1871,7 @@ function renderDays() {
     const e = byDay[date];
     e.bets++;
     if (result === 'WIN') { e.wins++; if (!e.best || pnl > e.best.pnl) e.best = {dog,odds,pnl}; }
-    e.pnl += pnl;
+    e.pnl += scaleF(pnl);
   });
   let arr = Object.values(byDay);
   arr.forEach(e => { e.wpct = e.bets ? (e.wins/e.bets)*100 : 0; });
@@ -1916,7 +1916,7 @@ function renderSubTracks() {
     e.bets++;
     if (result === 'WIN') { e.wins++; e.places++; }
     else if (result === 'PLACE') e.places++;
-    e.pnl += pnl;
+    e.pnl += scaleF(pnl);
     e.staked += (r[12]||0);
   });
   let arr = Object.values(byTrack);
@@ -1959,8 +1959,8 @@ function renderSubModels() {
     e.bets++;
     if (result === 'WIN') { e.wins++; e.places++; }
     else if (result === 'PLACE') e.places++;
-    e.pnl += pnl;
-    e.staked += (stake||0);
+    e.pnl += scaleF(pnl);
+    e.staked += scaleF(stake||0);
   });
   let arr = Object.values(byModel);
   arr.forEach(e => {
