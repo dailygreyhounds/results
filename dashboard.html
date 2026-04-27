@@ -1784,7 +1784,11 @@ function renderResults() {
       </div>`;
     }).join('');
 
-  // Table
+  // Table — recalculate cumulative P/L from filtered rows in chronological order
+  const sortedByDate = [...rows].sort((a,b) => a[1].localeCompare(b[1]) || a[0]-b[0]);
+  const filteredCum = {};
+  let cumRun = 0;
+  sortedByDate.forEach(r => { cumRun += r[8]; filteredCum[r[0]] = cumRun; });
   const tbody = rows.map(r => {
     const [n,date,dog,track,race,odds,result,pos,pnl,cum,tag,tags] = r;
     const rc = result==='WIN'?'win-txt':result==='PLACE'?'plc-txt':'los-txt';
@@ -1798,7 +1802,7 @@ function renderResults() {
       <td class="${rc}">${result}</td>
       <td class="td-muted">${ord(pos)}</td>
       <td>${fmtPL(pnl)}</td>
-      <td>${fmtPL(cum)}</td>
+      <td>${fmtPL(filteredCum[n]||0)}</td>
     </tr>`;
   }).join('');
   document.getElementById('results-tbody').innerHTML =
