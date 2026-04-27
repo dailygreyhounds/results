@@ -1953,6 +1953,12 @@ function renderSubTracks() {
 
 function renderSubModels() {
   const rows = getFilteredResults();
+  const model = document.getElementById('rf-model').value;
+  const month = document.getElementById('rf-month').value;
+  const systems = new Set(['Golden','M1','M2r','M1+M2r','S9','S10']);
+  const order = ['Golden','M1','M2r','M1+M2r','S9','S10','Other','Low Data','(untagged)'];
+  // Use MODELS data for system models (correct tiered staking)
+  // Use RESULTS_RAW for Other/Low Data
   const byModel = {};
   rows.forEach(r => {
     const [n,date,dog,track,race,odds,result,pos,pnl,cum,tag,tags,stake] = r;
@@ -1965,26 +1971,23 @@ function renderSubModels() {
     e.pnl += scaleF(pnl);
     e.staked += scaleF(stake||0);
   });
+  // Override system models with MODELS tab data (correct ROI)
+  MODELS.forEach(m => {
+    if (!systems.has(m.name)) return;
+    if (model !== 'all' && model !== m.name) return;
+    if (!byModel[m.name]) byModel[m.name] = {name:m.name, bets:0, wins:0, places:0, pnl:0, staked:0};
+    const e = byModel[m.name];
+    e.roi_override = m.roi;
+    e.pnl = scaleF(m.pnl || 0);
+  });
   let arr = Object.values(byModel);
   arr.forEach(e => {
     e.wpct = e.bets ? (e.wins/e.bets)*100 : 0;
     e.ppct = e.bets ? (e.places/e.bets)*100 : 0;
-    e.roi  = e.staked ? (e.pnl/e.staked)*100 : 0;
+    e.roi  = e.roi_override !== undefined ? e.roi_override : (e.staked ? (e.pnl/e.staked)*100 : 0);
   });
-
-  // Priority order for models
-  const order = ['Golden','M1','M2r','M1+M2r','S9','S10','Other','Low Data','(untagged)'];
-  if (smSortCol === 'name') {
-    arr.sort((a,b) => smSortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
-  } else {
-    arr.sort((a,b) => {
-      let av = a[smSortCol], bv = b[smSortCol];
-      return smSortAsc ? av-bv : bv-av;
-    });
-  }
-
-  const systems = new Set(['Golden','M1','M2r','M1+M2r','S9','S10']);
-
+  const orderMap = Object.fromEntries(order.map((n,i)=>[n,i]));
+  arr.sort((a,b) => (orderMap[a.name]??99) - (orderMap[b.name]??99));
   document.getElementById('submodels-tbody').innerHTML = arr.length
     ? arr.map(e => {
         const isSystem = systems.has(e.name);
