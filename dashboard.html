@@ -1580,7 +1580,7 @@ function statCard(lbl, val, cls='') {
 // ══════════════════════════════════════════════════════════════════
 // TODAY PAGE
 // ══════════════════════════════════════════════════════════════════
-updateBankroll(val) {
+function updateBankroll(val) {
   const v = parseInt(val);
   if (!v || v < 100) return;
   userBankroll = v;
