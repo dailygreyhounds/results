@@ -1502,7 +1502,7 @@ function scale(v) { return Math.round(v * userBankroll / BANKROLL); }
 function scaleF(v) { return v * userBankroll / BANKROLL; }
 
 // Today's selections — array of selection objects
-const TODAY_SEL     = [];
+const TODAY_SEL     = [{"dog": "Blackbrush Bill", "track": "Hobart", "race": "3", "box": "4", "odds": 2.0, "missing": 6, "time": "", "category": "lowdata", "tag": "Low", "rank1": 13, "stake": 750}, {"dog": "Mr. Devere", "track": "Horsham", "race": "9", "box": "6", "odds": 3.5, "missing": 4, "time": "", "category": "lowdata", "tag": "Low", "rank1": 11, "stake": 750}, {"dog": "Waddles Monelli", "track": "Mandurah", "race": "3", "box": "5", "odds": 3.3, "missing": 6, "time": "", "category": "lowdata", "tag": "Low", "rank1": 7, "stake": 750}, {"dog": "My Mum's Value", "track": "Angle Park", "race": "3", "box": "3", "odds": 4.6, "missing": 2, "time": "", "category": "other", "tag": "Other", "rank1": 16, "stake": 1000}, {"dog": "Sunset Claudius", "track": "Mandurah", "race": "7", "box": "2", "odds": 2.2, "missing": 3, "time": "", "category": "other", "tag": "Other", "rank1": 9, "stake": 550}];
 
 // Yesterday's results
 const YESTERDAY     = {"bets": 0, "wins": 0, "places": 0, "roi": 0, "dogs": []};
