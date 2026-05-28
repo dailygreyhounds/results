@@ -1780,7 +1780,7 @@ function renderResults() {
       statCard('Place Rate', fmtPct(places,n), 'gold') +
       statCard('Places', places) +
       statCard('Bets', n) +
-      statCard('P/L (mixed)', '—');
+      statCard('P/L (all-in)', fmtPLTxt(tpl), tpl>=0?'green':'red');
   } else {
     document.getElementById('results-stats').innerHTML =
       statCard('Win Rate', fmtPct(wins,n), 'gold') +
