@@ -1554,14 +1554,16 @@ function updateBankroll(val) {
 }
 function renderToday() {
   // Summary cards — all models treated equally
-  const totalStake = TODAY_SEL.reduce((a,s) => a + scale(s.stake || 0), 0);
-  const systemSels = TODAY_SEL.filter(s => s.category !== 'lowdata');
-  const lowSels    = TODAY_SEL.filter(s => s.category === 'lowdata');
-  const avgOdds    = TODAY_SEL.length
-    ? (TODAY_SEL.reduce((a,s) => a + (s.odds||0), 0) / TODAY_SEL.length).toFixed(2)
+  // System-only headline: exclude both Low and Other from top-line stats
+  const SYS_CATS = ['golden','m1','m2r','m1m2r','s9','s10'];
+  const systemSels = TODAY_SEL.filter(s => SYS_CATS.includes((s.category||'').toLowerCase()));
+  const lowSels    = TODAY_SEL.filter(s => (s.category||'').toLowerCase() === 'lowdata');
+  const totalStake = systemSels.reduce((a,s) => a + scale(s.stake || 0), 0);
+  const avgOdds    = systemSels.length
+    ? (systemSels.reduce((a,s) => a + (s.odds||0), 0) / systemSels.length).toFixed(2)
     : '—';
   document.getElementById('today-stats').innerHTML =
-    statCard('Selections', TODAY_SEL.length, 'gold') +
+    statCard('Selections', systemSels.length, 'gold') +
     statCard('Total Stake', '$' + totalStake.toLocaleString(), totalStake > 0 ? 'green' : '') +
     statCard('Bankroll', '$' + userBankroll.toLocaleString()) +
     statCard('Avg Odds', '$' + avgOdds) +
@@ -1571,7 +1573,7 @@ function renderToday() {
       return statCard('Systems', _sysCount);
     })();
 
-  const todaySub = `${TODAY_SEL.length} selections · $${totalStake.toLocaleString()} total stake · Bankroll $${userBankroll.toLocaleString()}`;
+  const todaySub = `${systemSels.length} system selections · $${totalStake.toLocaleString()} total stake · Bankroll $${userBankroll.toLocaleString()}`;
   document.getElementById('today-sub').textContent = todaySub;
   const bi = document.getElementById('bankroll-input'); if(bi && !bi.dataset.init){bi.value=userBankroll;bi.dataset.init='1';}
 
@@ -1650,8 +1652,17 @@ function renderToday() {
 
   // Yesterday
   if (YESTERDAY && YESTERDAY.dogs && YESTERDAY.dogs.length) {
-    const yb = YESTERDAY.bets, yw = YESTERDAY.wins, yp = YESTERDAY.places;
-    const yROI = YESTERDAY.roi || 0;
+    // D15: drop Low, use systems-only for headline stats
+    const SYS_TAGS_Y = ['Golden','M1','M2r','M1+M2r','S9','S10'];
+    const yAll   = YESTERDAY.dogs.filter(d => (d.tag||'') !== 'Low Data' && (d.tag||'') !== 'Low');
+    const ySys   = yAll.filter(d => SYS_TAGS_Y.includes(d.tag||''));
+    const yOther = yAll.filter(d => !SYS_TAGS_Y.includes(d.tag||''));
+    const yb = ySys.length;
+    const yw = ySys.filter(d => d.result === 'WIN').length;
+    const yp = ySys.filter(d => d.result === 'WIN' || d.result === 'PLACE').length;
+    const yStake = ySys.reduce((a,d) => a + (d.stake||0), 0);
+    const yPnl   = ySys.reduce((a,d) => a + (d.pnl||0), 0);
+    const yROI   = yStake ? ((yPnl/yStake)*100) : 0;
     document.getElementById('yesterday-stats').innerHTML =
       statCard('Bets', yb) +
       statCard('Won', yw, yw/yb >= .6 ? 'green' : '') +
@@ -1659,7 +1670,7 @@ function renderToday() {
       statCard('ROI', (yROI>=0?'+':'')+yROI.toFixed(1)+'%', yROI>=0?'green':'red');
 
     let yHtml = '<div class="sel-grid">';
-    YESTERDAY.dogs.forEach(d => {
+    ySys.forEach(d => {
       const resClass = d.result==='WIN'?'win-txt':d.result==='PLACE'?'plc-txt':'los-txt';
       const pnlS = d.pnl >= 0 ? `<span class="pos">+$${d.pnl.toLocaleString()}</span>`
                               : `<span class="neg">-$${Math.abs(d.pnl).toLocaleString()}</span>`;
