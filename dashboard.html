@@ -1778,7 +1778,14 @@ function getFilteredResults() {
     const [n,date,dog,track,race,odds,result,pos,pnl,cum,tag,tags] = r;
     if (res === 'LOSS' && (result==='WIN'||result==='PLACE')) return false;
     if (res !== 'all' && res !== 'LOSS' && result !== res) return false;
-    if (model !== 'all' && !(tags||[tag]).includes(model)) return false;
+    // D17: 'all' means all *system* models. Other has its own explicit filter.
+    const SYS_TAGS_F = ['Golden','M1','M2r','M1+M2r','S9','S10'];
+    const rowTags = tags || [tag];
+    if (model === 'all') {
+      if (!rowTags.some(t => SYS_TAGS_F.includes(t))) return false;
+    } else if (!rowTags.includes(model)) {
+      return false;
+    }
     if (month !== 'all' && !date.startsWith(month)) return false;
     if (srch && !dog.toLowerCase().includes(srch) && !track.toLowerCase().includes(srch)) return false;
     return true;
