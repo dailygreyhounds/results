@@ -331,6 +331,7 @@ footer{
   <div class="section-label">Yesterday's Results</div>
   <div id="yesterday-stats" class="card-row"></div>
   <div id="yesterday-dogs"></div>
+  <div id="yesterday-other-section" style="display:none"></div>
 </div>
 
 <!-- ════════════════════════════════════════════════════════
@@ -1660,7 +1661,13 @@ function renderToday() {
     const yb = ySys.length;
     const yw = ySys.filter(d => d.result === 'WIN').length;
     const yp = ySys.filter(d => d.result === 'WIN' || d.result === 'PLACE').length;
-    const yStake = ySys.reduce((a,d) => a + (d.stake||0), 0);
+    // stake isn't in the YESTERDAY payload — derive it: winners stake = pnl/(odds-1); losers stake = |pnl|
+    function _stake(d) {
+      if (d.stake) return d.stake;
+      if (d.result === 'WIN' && d.odds && d.odds > 1) return d.pnl / (d.odds - 1);
+      return Math.abs(d.pnl || 0);
+    }
+    const yStake = ySys.reduce((a,d) => a + _stake(d), 0);
     const yPnl   = ySys.reduce((a,d) => a + (d.pnl||0), 0);
     const yROI   = yStake ? ((yPnl/yStake)*100) : 0;
     document.getElementById('yesterday-stats').innerHTML =
@@ -1693,6 +1700,48 @@ function renderToday() {
     });
     yHtml += '</div>';
     document.getElementById('yesterday-dogs').innerHTML = yHtml;
+    // Yesterday's Other — collapsible section using the same _stake helper
+    const yesterdayOtherHost = document.getElementById('yesterday-other-section');
+    if (yesterdayOtherHost) {
+      if (yOther.length > 0) {
+        yesterdayOtherHost.style.display = '';
+        const yoStake = yOther.reduce((a,d) => a + _stake(d), 0);
+        let yoHtml = '<div class="sel-grid">';
+        yOther.forEach(d => {
+          const pnlS = d.pnl >= 0
+            ? `<span class="pos">+$${d.pnl.toLocaleString()}</span>`
+            : `<span class="neg">-$${Math.abs(d.pnl).toLocaleString()}</span>`;
+          const st = _stake(d);
+          yoHtml += `<div class="sel-card">
+            <div class="sel-head">
+              <div>
+                <div class="sel-name">${d.dog}</div>
+                <div class="sel-meta">${d.track} · ${d.race}</div>
+                <div class="sel-meta">${d.result}</div>
+              </div>
+              <div class="sel-odds">${d.odds ? '$' + d.odds.toFixed(2) : '—'}</div>
+            </div>
+            <div style="margin:6px 0"><span class="tag tag-other">📋 Other</span></div>
+            <div class="sel-stake">
+              <span class="stake-lbl">Stake $${st.toLocaleString()}</span>
+              <span class="stake-val">→ ${pnlS}</span>
+            </div>
+          </div>`;
+        });
+        yoHtml += '</div>';
+        yesterdayOtherHost.innerHTML =
+          `<details style="margin-top:20px;border-top:1px dashed var(--border2);padding-top:12px">
+             <summary style="cursor:pointer;color:var(--txt2);font-size:13px;padding:8px 0">
+               ▼ Other results — ${yOther.length} tracked · $${yoStake.toLocaleString()} stake
+               <span style="color:var(--txt3);margin-left:8px">not part of headline stats</span>
+             </summary>
+             <div style="margin-top:12px">${yoHtml}</div>
+           </details>`;
+      } else {
+        yesterdayOtherHost.style.display = 'none';
+        yesterdayOtherHost.innerHTML = '';
+      }
+    }
   } else {
     document.getElementById('yesterday-stats').innerHTML = '<p style="color:var(--txt3)">No results recorded yet.</p>';
     document.getElementById('yesterday-dogs').innerHTML = '';
