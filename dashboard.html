@@ -325,6 +325,7 @@ footer{
   <div id="today-stats" class="card-row"></div>
 
   <div id="selections-container"></div>
+  <div id="other-section" style="display:none"></div>
 
   <div class="divider"></div>
   <div class="section-label">Yesterday's Results</div>
@@ -1585,6 +1586,9 @@ function renderToday() {
   });
 
   let html = '';
+  let otherHtml = '';
+  let otherCount = 0;
+  let otherStake = 0;
   for (const cat of categories) {
     const sels = cat.promoName
       ? TODAY_SEL.filter(s => s.tag === cat.promoName)
@@ -1592,8 +1596,10 @@ function renderToday() {
     if (!sels.length) continue;
 
     const catStake = sels.reduce((a,s) => a + scale(s.stake||0), 0);
-    html += `<div class="section-label">${cat.emoji} ${cat.label} — ${sels.length} selection${sels.length>1?'s':''} · $${catStake.toLocaleString()} stake</div>`;
-    html += '<div class="sel-grid">';
+    const isOther = (cat.key === 'other');
+    let buf = '';
+    buf += `<div class="section-label">${cat.emoji} ${cat.label} — ${sels.length} selection${sels.length>1?'s':''} · $${catStake.toLocaleString()} stake</div>`;
+    buf += '<div class="sel-grid">';
     sels.forEach(s => {
       const stake = scale(s.stake || 0);
       const ret = s.odds && stake ? Math.round(s.odds * stake) : 0;
@@ -1602,7 +1608,7 @@ function renderToday() {
                     : r1 >= 15 ? ' <span style="color:var(--txt2);font-size:10px">r1×'+r1+'</span>'
                     : r1 > 0  ? ' <span style="color:var(--txt3);font-size:10px">r1×'+r1+'</span>'
                     : '';
-      html += `<div class="sel-card">
+      buf += `<div class="sel-card">
         <div class="sel-head">
           <div>
             <div class="sel-name">${s.dog}${r1Badge}</div>
@@ -1618,10 +1624,25 @@ function renderToday() {
         </div>
       </div>`;
     });
-    html += '</div>';
+    buf += '</div>';
+    if (isOther) { otherHtml = buf; otherCount = sels.length; otherStake = catStake; } else { html += buf; }
   }
   if (!TODAY_SEL.length) html = '<p style="color:var(--txt3);padding:20px 0">No selections for today.</p>';
   document.getElementById('selections-container').innerHTML = html;
+  const otherHost = document.getElementById('other-section');
+  if (otherHost) {
+    if (otherCount > 0) {
+      otherHost.style.display = '';
+      otherHost.innerHTML =
+        `<details style="margin-top:32px;border-top:1px dashed var(--border2);padding-top:16px">
+           <summary style="cursor:pointer;color:var(--txt2);font-size:13px;padding:8px 0">
+             ▼ Other selections — ${otherCount} tracked · $${otherStake.toLocaleString()} stake
+             <span style="color:var(--txt3);margin-left:8px">not part of headline stats</span>
+           </summary>
+           <div style="margin-top:12px">${otherHtml}</div>
+         </details>`;
+    } else { otherHost.style.display = 'none'; otherHost.innerHTML = ''; }
+  }
 
   // Yesterday
   if (YESTERDAY && YESTERDAY.dogs && YESTERDAY.dogs.length) {
