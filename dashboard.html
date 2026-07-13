@@ -1565,7 +1565,11 @@ function renderToday() {
     statCard('Total Stake', '$' + totalStake.toLocaleString(), totalStake > 0 ? 'green' : '') +
     statCard('Bankroll', '$' + userBankroll.toLocaleString()) +
     statCard('Avg Odds', '$' + avgOdds) +
-    statCard('Systems', systemSels.length);
+    (function(){
+      const _sysTags = ['golden','m1','m2r','m1m2r','s9','s10'];
+      const _sysCount = TODAY_SEL.filter(s => _sysTags.includes((s.category||'').toLowerCase())).length;
+      return statCard('Systems', _sysCount);
+    })();
 
   const todaySub = `${TODAY_SEL.length} selections · $${totalStake.toLocaleString()} total stake · Bankroll $${userBankroll.toLocaleString()}`;
   document.getElementById('today-sub').textContent = todaySub;
@@ -1764,13 +1768,21 @@ function renderResults() {
   const wins_sys   = sysRows.filter(r=>r[6]==='WIN').length;
   const places_sys = sysRows.filter(r=>r[6]==='WIN'||r[6]==='PLACE').length;
   if (isWinRateMode) {
+    // If user explicitly filtered to Other, use the filtered rows (not systems-only).
+    // Only the "all" default view uses systems-only headline.
+    const useSys = (model === 'all');
+    const _wins  = useSys ? wins_sys   : wins;
+    const _plc   = useSys ? places_sys : places;
+    const _bets  = useSys ? n_sys      : n;
+    const _tpl   = useSys ? tpl_sys    : tpl;
+    const _label = useSys ? 'P/L (systems)' : 'P/L (' + model + ')';
     document.getElementById('results-stats').innerHTML =
-      statCard('Win Rate', fmtPct(wins_sys, n_sys), 'gold') +
-      statCard('Wins', wins_sys) +
-      statCard('Place Rate', fmtPct(places_sys, n_sys), 'gold') +
-      statCard('Places', places_sys) +
-      statCard('Bets', n_sys) +
-      statCard('P/L (systems)', fmtPLTxt(tpl_sys), tpl_sys>=0?'green':'red');
+      statCard('Win Rate', fmtPct(_wins, _bets), 'gold') +
+      statCard('Wins', _wins) +
+      statCard('Place Rate', fmtPct(_plc, _bets), 'gold') +
+      statCard('Places', _plc) +
+      statCard('Bets', _bets) +
+      statCard(_label, fmtPLTxt(_tpl), _tpl>=0?'green':'red');
   } else {
     document.getElementById('results-stats').innerHTML =
       statCard('Win Rate', fmtPct(wins,n), 'gold') +
@@ -1785,7 +1797,7 @@ function renderResults() {
   const mpl = {};
   Object.keys(MONTHS_MAP).forEach(m => mpl[m] = 0);
   // For the "all" filter, monthly cards sum systems-only P/L to match the headline
-  const monthlyRows = isWinRateMode ? sysRows : rows;
+  const monthlyRows = (model === "all") ? sysRows : rows;
   monthlyRows.forEach(r => { const m=r[1].slice(0,7); if(m in mpl) mpl[m]+=scaleF(r[8]); });
   document.getElementById('month-row').innerHTML =
     Object.keys(MONTHS_MAP).sort().map(m => {
