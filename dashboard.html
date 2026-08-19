@@ -154,6 +154,7 @@ tbody tr:hover td{background:var(--bg2)}
 .tag-s10   {background:rgba(251,146,60,.15); color:#fb923c;border:1px solid rgba(251,146,60,.3)}
 .tag-low   {background:rgba(239,68,68,.12);  color:#f87171;border:1px solid rgba(239,68,68,.25)}
 .tag-gold  {background:rgba(240,180,41,.15); color:#f0b429;border:1px solid rgba(240,180,41,.3)}
+.tag-watch {background:rgba(201,168,106,.12);color:#c9a86a;border:1px dashed rgba(201,168,106,.45)}
 .tag-promo {background:rgba(45,212,191,.15); color:#2dd4bf;border:1px solid rgba(45,212,191,.3)}
 
 /* ── Colour helpers ──────────────────────────────────────────────────── */
@@ -1483,6 +1484,17 @@ const RESULTS_RAW   = ([[1, "2025-12-29", "Loving It Sweet", "Angle Park", "R1",
 // Model definitions
 const MODELS        = [{"name": "Golden-70", "emoji": "⭐", "type": "standard", "criteria": "Golden · odds ≤$1.70 — STAKED", "watch": false, "bets": 151, "wins": 117, "places": 139, "roi": 12.1, "pnl": 23015, "staked": 189800, "days": 91, "freq": 0.76, "total_days": 199}, {"name": "M1", "emoji": "⚡", "type": "standard", "criteria": "Odds ≥$5 · Weekday · R≥4", "watch": false, "bets": 29, "wins": 6, "places": 19, "roi": 86.9, "pnl": 21500, "staked": 24750, "days": 25, "freq": 0.15, "total_days": 199}, {"name": "M2r", "emoji": "🔬", "type": "standard", "criteria": "Dual rank=1 · Weekday · R≥4", "watch": false, "bets": 120, "wins": 68, "places": 85, "roi": 23.0, "pnl": 28743, "staked": 124950, "days": 65, "freq": 0.6, "total_days": 199}, {"name": "M1+M2r", "emoji": "💎", "type": "standard", "criteria": "Both M1 + M2r conditions", "watch": false, "bets": 13, "wins": 3, "places": 8, "roi": 108.5, "pnl": 12750, "staked": 11750, "days": 12, "freq": 0.07, "total_days": 199}, {"name": "S10", "emoji": "🌊", "type": "standard", "criteria": "lx_avg=1 + box 7/8 rank=1 · Weekday · Not Tue", "watch": false, "bets": 83, "wins": 58, "places": 67, "roi": 38.3, "pnl": 41773, "staked": 109200, "days": 48, "freq": 0.42, "total_days": 199}, {"name": "Golden+70", "emoji": "👁️", "type": "standard", "criteria": "Golden · odds >$1.70 — WATCH ONLY, not staked", "watch": true, "bets": 68, "wins": 29, "places": 47, "roi": -15.2, "pnl": -13970, "staked": 92000, "days": 51, "freq": 0.34, "total_days": 199}, {"name": "S9", "emoji": "💫", "type": "standard", "criteria": "(M1 or M2r) + lx_avg rank=1 · Field ≥7 · Not Tue — RETIRED 19 Aug 2026", "watch": true, "bets": 45, "wins": 30, "places": 36, "roi": 42.3, "pnl": 21657, "staked": 51150, "days": 28, "freq": 0.23, "total_days": 199}, {"name": "Other", "emoji": "📋", "type": "standard", "criteria": "Anything not qualifying for a specific system", "watch": false, "bets": 637, "wins": 200, "places": 384, "roi": -19.8, "pnl": -111796, "staked": 563350, "days": 189, "freq": 3.2, "total_days": 199}];
 
+// ── Single source of truth for model tags (19 Aug 2026) ────────────────────
+// These were previously hardcoded in six separate places, which is how the
+// Golden split silently dropped Golden-70 bets out of several views.
+// Change them HERE only.
+const STAKED_TAGS = ['Golden-70','M1','M2r','M1+M2r','S10'];
+const WATCH_TAGS  = ['Golden+70','S9'];          // retired — notional P&L only
+// 'Golden' stays in the system set because every split bet still carries the
+// parent tag in its tags[] array; excluding it would drop pre-split rows.
+const SYSTEM_TAGS = STAKED_TAGS.concat(WATCH_TAGS, ['Golden']);
+const isWatchTag  = t => WATCH_TAGS.includes(t);
+
 // Track stats — {name: {bets, wins, places}}
 const TRACK_STATS   = {"Angle Park": {"bets": 87, "wins": 34, "places": 56}, "Launceston": {"bets": 19, "wins": 6, "places": 12}, "Maitland": {"bets": 35, "wins": 14, "places": 23}, "Nowra": {"bets": 41, "wins": 17, "places": 22}, "Shepparton": {"bets": 27, "wins": 14, "places": 20}, "Wagga": {"bets": 13, "wins": 8, "places": 11}, "Warrnambool": {"bets": 25, "wins": 10, "places": 17}, "Geelong": {"bets": 28, "wins": 10, "places": 19}, "Gosford": {"bets": 13, "wins": 3, "places": 5}, "Horsham": {"bets": 14, "wins": 1, "places": 4}, "Mandurah": {"bets": 57, "wins": 19, "places": 32}, "Murray Bridge Straight": {"bets": 46, "wins": 14, "places": 26}, "Warragul": {"bets": 25, "wins": 9, "places": 15}, "Capalaba": {"bets": 75, "wins": 23, "places": 49}, "Meadows": {"bets": 9, "wins": 1, "places": 3}, "Sale": {"bets": 25, "wins": 8, "places": 15}, "Temora": {"bets": 18, "wins": 4, "places": 9}, "Ladbrokes Q2 Parklands": {"bets": 28, "wins": 13, "places": 17}, "Wentworth Park": {"bets": 27, "wins": 11, "places": 15}, "Healesville": {"bets": 93, "wins": 35, "places": 64}, "Ladbrokes Q1 Lakeside": {"bets": 79, "wins": 28, "places": 55}, "The Gardens": {"bets": 33, "wins": 10, "places": 20}, "Cannington": {"bets": 15, "wins": 10, "places": 13}, "Darwin": {"bets": 43, "wins": 13, "places": 26}, "Mount Gambier": {"bets": 60, "wins": 22, "places": 39}, "Murray Bridge": {"bets": 28, "wins": 13, "places": 21}, "Dubbo": {"bets": 18, "wins": 6, "places": 12}, "Bendigo": {"bets": 22, "wins": 6, "places": 12}, "Rockhampton": {"bets": 35, "wins": 12, "places": 17}, "Taree": {"bets": 28, "wins": 11, "places": 18}, "Hobart": {"bets": 35, "wins": 21, "places": 29}, "Richmond": {"bets": 49, "wins": 18, "places": 29}, "Townsville": {"bets": 16, "wins": 4, "places": 8}, "Gunnedah": {"bets": 9, "wins": 5, "places": 5}, "Bulli": {"bets": 16, "wins": 5, "places": 9}, "Grafton": {"bets": 22, "wins": 4, "places": 12}, "Ballarat": {"bets": 30, "wins": 9, "places": 20}, "Casino": {"bets": 18, "wins": 6, "places": 14}, "Sandown": {"bets": 10, "wins": 3, "places": 6}, "Gawler": {"bets": 25, "wins": 8, "places": 15}, "Goulburn": {"bets": 28, "wins": 8, "places": 15}, "Northam": {"bets": 10, "wins": 3, "places": 7}, "Broken Hill": {"bets": 2, "wins": 0, "places": 1}, "Traralgon": {"bets": 10, "wins": 1, "places": 6}};
 
@@ -1526,7 +1538,9 @@ const TAG_INFO = {
   'M1':       {cls:'tag-m1',    emoji:'⚡'},
   'S9':       {cls:'tag-s9',    emoji:'💫'},
   'S10':      {cls:'tag-s10',   emoji:'🌊'},
-  'Golden':   {cls:'tag-gold',  emoji:'⭐'},
+  'Golden':    {cls:'tag-gold',  emoji:'⭐'},
+  'Golden-70': {cls:'tag-gold',  emoji:'⭐'},
+  'Golden+70': {cls:'tag-watch', emoji:'👁️'},
   'Other':    {cls:'tag-s10',   emoji:'📋'},
   'Low':      {cls:'tag-low',   emoji:'⚠️'},
 };
@@ -1589,7 +1603,8 @@ function renderToday() {
     {key:'s9',      emoji:'💫', label:'S9'},
     {key:'m1m2r',   emoji:'💎', label:'M1+M2r'},
     {key:'s10',     emoji:'🌊', label:'S10'},
-    {key:'golden',  emoji:'⭐', label:'Golden'},
+    {key:'goldenm70', emoji:'⭐', label:'Golden-70'},
+    {key:'goldenp70', emoji:'👁️', label:'Golden+70'},
     {key:'m1',      emoji:'⚡', label:'M1'},
     {key:'m2r',     emoji:'🔬', label:'M2r'},
     {key:'other',   emoji:'📋', label:'Other'},
@@ -1660,7 +1675,7 @@ function renderToday() {
   // Yesterday
   if (YESTERDAY && YESTERDAY.dogs && YESTERDAY.dogs.length) {
     // D15: drop Low, use systems-only for headline stats
-    const SYS_TAGS_Y = ['Golden','M1','M2r','M1+M2r','S9','S10'];
+    const SYS_TAGS_Y = SYSTEM_TAGS;
     const yAll   = YESTERDAY.dogs.filter(d => (d.tag||'') !== 'Low Data' && (d.tag||'') !== 'Low');
     const ySys   = yAll.filter(d => SYS_TAGS_Y.includes(d.tag||''));
     const yOther = yAll.filter(d => !SYS_TAGS_Y.includes(d.tag||''));
@@ -1785,7 +1800,7 @@ function getFilteredResults() {
     if (res === 'LOSS' && (result==='WIN'||result==='PLACE')) return false;
     if (res !== 'all' && res !== 'LOSS' && result !== res) return false;
     // D17: 'all' means all *system* models. Other has its own explicit filter.
-    const SYS_TAGS_F = ['Golden','M1','M2r','M1+M2r','S9','S10'];
+    const SYS_TAGS_F = SYSTEM_TAGS;
     const rowTags = tags || [tag];
     if (model === 'all') {
       if (!rowTags.some(t => SYS_TAGS_F.includes(t))) return false;
@@ -1829,7 +1844,7 @@ function renderResults() {
   const n      = rows.length;
   const roi    = n ? ((tpl/(rows.reduce((a,r)=>a+(r[12]||0),0)||1))*100).toFixed(1)+'%' : '—';
   // Systems-only P/L excludes Other — used for headline card on "all" filter
-  const SYS_TAGS = ['Golden','M1','M2r','M1+M2r','S9','S10'];
+  const SYS_TAGS = SYSTEM_TAGS;
   const sysRows  = rows.filter(r=>SYS_TAGS.includes(r[10]));
   const tpl_sys  = sysRows.reduce((a,r)=>a+scaleF(r[8]),0);
   const n_sys    = sysRows.length;
@@ -2032,8 +2047,8 @@ function renderSubModels() {
   const rows = getFilteredResults();
   const model = document.getElementById('rf-model').value;
   const month = document.getElementById('rf-month').value;
-  const systems = new Set(['Golden','M1','M2r','M1+M2r','S9','S10']);
-  const order = ['Golden','M1','M2r','M1+M2r','S9','S10','Other','Low Data','(untagged)'];
+  const systems = new Set(SYSTEM_TAGS);
+  const order = STAKED_TAGS.concat(WATCH_TAGS, ['Golden','Other','Low Data','(untagged)']);
   // Use MODELS data for system models (correct tiered staking)
   // Use RESULTS_RAW for Other/Low Data
   const byModel = {};
@@ -2207,7 +2222,7 @@ function renderGlossary() {
       emoji:'⭐', name:'Golden Rule', cls:'tag-gold',
       criteria:'Odds ≤ $2.00 AND ≤1 dog missing box data in the race',
       desc:'The highest-conviction selections. Short-priced favourites in races with near-complete historical time data. The combination of short odds and complete data makes these the most reliable signal in the system.',
-      stats: MODELS.find(m=>m.name==='Golden')
+      stats: MODELS.find(m=>m.name==='Golden-70')
     },
     {
       emoji:'⚡', name:'M1 — Longshot', cls:'tag-m1',
